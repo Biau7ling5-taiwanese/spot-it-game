@@ -606,19 +606,37 @@
   </div>
 
 <script>
-  let imageList = [];
+  // ===== GitHub 預設中秋 31 張台文圖檔清單 =====
+  const defaultAutumnFilenames = [
+    "蛋黃酥.png", "綠豆椪.png", "柚仔.png", "嫦娥.png", "玉兔.png",
+    "吳剛.png", "雞翼仔.png", "番麥.png", "番椒仔.png", "金針菇.png",
+    "煙腸.png", "甜不辣.png", "米血.png", "豬肉片.png", "牛肉.png",
+    "香菇.png", "蚶仔.png", "蝦仔.png", "吐司.png", "麻糬.png",
+    "棉花糖.png", "豆干.png", "筊白筍.png", "番薯.png", "雞腿.png",
+    "魷魚.png", "木炭.png", "烘肉架.png", "點火機仔.png", "煙火.png", "月餅.png"
+  ];
+
+  // 自動構建預設圖庫陣列（直接指向 GitHub 倉庫上的 themes/autumn/ 資料夾）
+  const githubDefaultImages = defaultAutumnFilenames.map((fname, idx) => ({
+    id: 'gh_' + idx,
+    name: fname.replace('.png', ''),
+    src: `themes/autumn/${encodeURIComponent(fname)}`
+  }));
+
+  // 預設直接採用 GitHub 雲端圖庫（31張）
+  let imageList = [...githubDefaultImages];
   let deck = [];
   let currentRound = 0;
   let teamScores = [];
   let db = null;
-  let currentCards = [null, null]; // 記錄當前展示中的題目卡
+  let currentCards = [null, null];
 
+  // 台語正字辭典備案（圖檔讀取異常時自動退回文字顯示）
   const defaultSymbols = [
-    "蛋黃酥","綠豆椪","柚子","嫦娥","玉兔","吳剛","雞翅","秋刀魚",
-    "玉米","青椒","金針菇","香腸","甜不辣","米血","豬肉片","牛排",
-    "香菇","蛤蜊","杏鮑菇","草蝦","吐司","麻糬","棉花糖","豆干",
-    "筊白筍","地瓜","雞腿","干貝","玉米筍","三層肉","飯糰","烤肉醬",
-    "烤肉爐","煙火","魷魚","小卷","火種","木炭","烤肉網","打火機","噴火槍"
+    "蛋黃酥","綠豆椪","柚仔","嫦娥","玉兔","吳剛","雞翼仔","番麥",
+    "番椒仔","金針菇","煙腸","甜不辣","米血","豬肉片","牛肉","香菇",
+    "蚶仔","蝦仔","吐司","麻糬","棉花糖","豆干","筊白筍","番薯",
+    "雞腿","魷魚","木炭","烘肉架","點火機仔","煙火","月餅"
   ];
 
   function playVictorySound() {
@@ -691,7 +709,7 @@
   }
 
   function initDB() {
-    const request = indexedDB.open("SpotItGameDB", 1);
+    const request = indexedDB.open("SpotItGameDB", 2);
     request.onupgradeneeded = function(e) {
       const dbInstance = e.target.result;
       if (!dbInstance.objectStoreNames.contains("images")) {
@@ -734,10 +752,13 @@
     req.onsuccess = function() {
       if (req.result && req.result.length > 0) {
         imageList = req.result;
-        renderThumbnails();
-        resetGame();
-        document.getElementById('thumb-container').style.display = 'none';
+      } else {
+        // 若使用者尚未手動上傳新圖覆蓋，一律預設載入 GitHub 的 31 張中秋圖
+        imageList = [...githubDefaultImages];
       }
+      renderThumbnails();
+      resetGame();
+      document.getElementById('thumb-container').style.display = 'none';
     };
   }
 
@@ -761,10 +782,7 @@
       const data = imgData.data;
 
       for (let i = 0; i < data.length; i += 4) {
-        const r = data[i];
-        const g = data[i + 1];
-        const b = data[i + 2];
-        if (r > 238 && g > 238 && b > 238) {
+        if (data[i] > 238 && data[i + 1] > 238 && data[i + 2] > 238) {
           data[i + 3] = 0;
         }
       }
@@ -826,7 +844,7 @@
   }
 
   function clearAllImages() {
-    if (confirm("確定要清空所有圖片嗎？這也會清空後台快取資料！")) {
+    if (confirm("確定要清空圖庫嗎？（將暫時退回純文字台語模式）")) {
       imageList = [];
       if (db) {
         const tx = db.transaction("images", "readwrite");
@@ -947,7 +965,6 @@
     const disk = document.getElementById(diskId);
     disk.innerHTML = '';
     
-    // 動態依據當前圓盤實際像素大小計算半徑
     const rect = disk.getBoundingClientRect();
     const radius = rect.width / 2 || 160;
 
@@ -959,7 +976,6 @@
       const el = document.createElement('div');
       el.className = 'symbol-item';
 
-      // 依當前實際半徑動態計算尺寸
       const baseRatio = symbolIds.length >= 8 ? 0.30 : 0.38;
       const baseSize = radius * baseRatio;
       const scale = 0.8 + Math.random() * 0.5;
@@ -973,9 +989,19 @@
       el.style.top = `${radius + slot.y - size / 2}px`;
       el.style.transform = `rotate(${angle}deg)`;
 
-      if (imageList[symId]) {
+      const currentItem = imageList[symId];
+      if (currentItem && currentItem.src) {
         const img = document.createElement('img');
-        img.src = imageList[symId].src;
+        img.src = currentItem.src;
+        img.alt = currentItem.name || `圖案 ${symId + 1}`;
+        // 容錯處理：若圖片未讀取成功，自動降級顯示台文文字卡
+        img.onerror = function() {
+          this.style.display = 'none';
+          const span = document.createElement('div');
+          span.className = 'symbol-fallback';
+          span.innerText = currentItem.name || defaultSymbols[symId] || `圖案 ${symId + 1}`;
+          el.appendChild(span);
+        };
         el.appendChild(img);
       } else {
         const span = document.createElement('div');
@@ -1013,7 +1039,6 @@
     }
   }
 
-  // 螢幕旋轉或視窗縮放時，自動等比重繪當前圓盤圖案
   let resizeTimer = null;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimer);
