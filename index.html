@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Spot It!</title>
+<title>Spot It! 主題式課堂教具</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -18,7 +18,7 @@
     overflow-x: hidden;
   }
 
-  /* 標題 */
+  /* 活潑遊戲化標題 */
   .header-banner {
     display: flex;
     align-items: center;
@@ -48,7 +48,7 @@
     50% { transform: rotate(12deg) scale(1.08); }
   }
 
-  /* 控制列 */
+  /* 緊湊一體化控制列 */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
@@ -99,8 +99,10 @@
     border-radius: 6px;
     border: 1px solid rgba(0, 150, 136, 0.35);
     white-space: nowrap;
+    transition: all 0.3s ease;
   }
 
+  /* 頂部圖示按鈕組與 Tooltip */
   .right-icons {
     display: flex;
     align-items: center;
@@ -119,13 +121,37 @@
     align-items: center;
     justify-content: center;
     font-size: clamp(13px, 1.5vw, 15px);
-    transition: transform 0.15s;
+    transition: transform 0.15s, background-color 0.2s;
   }
   .icon-btn:active { transform: scale(0.92); }
   .btn-sync { background: rgba(0, 150, 136, 0.25); border-color: rgba(38, 166, 154, 0.45); color: #80cbc4; }
+  .btn-sync:hover { background: rgba(0, 150, 136, 0.45); }
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
+  .btn-view:hover { background: rgba(124, 77, 255, 0.42); }
 
-  /* 縮圖檢視抽屜 */
+  /* 頂部按鈕 Tooltip（向下彈出） */
+  .icon-btn::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    bottom: -32px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(12, 15, 33, 0.96);
+    color: #e0e7ff;
+    padding: 4px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s, bottom 0.2s;
+    border: 1px solid #3d467c;
+    z-index: 100;
+  }
+  .icon-btn:hover::after { opacity: 1; bottom: -36px; }
+
+  /* 縮圖抽屜 */
   .thumb-drawer {
     display: none;
     flex-wrap: wrap;
@@ -188,6 +214,7 @@
     cursor: pointer;
     font-size: 11px;
   }
+  .btn-score:hover { background: #3c4482; }
 
   /* 舞台與雙圓盤 */
   .stage-wrapper {
@@ -213,6 +240,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
+    transform: translateZ(0);
   }
   .empty-msg { color: #7b8199; font-size: clamp(12px, 1.4vw, 15px); font-weight: bold; text-align: center; }
 
@@ -223,6 +251,7 @@
     align-items: center;
     justify-content: center;
     user-select: none;
+    will-change: transform, left, top;
   }
   .symbol-item img {
     width: 100%;
@@ -242,7 +271,7 @@
     white-space: nowrap;
   }
 
-  /* 右側操作面板 */
+  /* 右側操作面板與 Tooltip */
   .side-action-panel {
     display: flex;
     flex-direction: column;
@@ -265,17 +294,45 @@
     align-items: center;
     justify-content: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.25);
-    transition: transform 0.15s;
+    transition: transform 0.15s, background-color 0.2s;
   }
   .side-icon-btn:active { transform: scale(0.92); }
   .btn-draw { background: rgba(33, 150, 243, 0.2); border-color: rgba(100, 181, 246, 0.45); }
+  .btn-draw:hover { background: rgba(33, 150, 243, 0.35); }
   .btn-shuffle { background: rgba(156, 39, 176, 0.2); border-color: rgba(186, 104, 200, 0.45); }
+  .btn-shuffle:hover { background: rgba(156, 39, 176, 0.35); }
   .btn-reset { background: rgba(244, 67, 54, 0.2); border-color: rgba(229, 115, 115, 0.45); }
+  .btn-reset:hover { background: rgba(244, 67, 54, 0.35); }
   .btn-podium { background: rgba(255, 179, 0, 0.2); border-color: rgba(255, 213, 79, 0.45); }
+  .btn-podium:hover { background: rgba(255, 179, 0, 0.35); }
+
+  /* 右側按鈕 Tooltip（向左彈出） */
+  .side-icon-btn::before {
+    content: attr(data-tooltip);
+    position: absolute;
+    right: calc(100% + 10px);
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(10, 13, 28, 0.96);
+    color: #ffd54f;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: bold;
+    white-space: nowrap;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s;
+    border: 1px solid #ff9800;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    z-index: 100;
+  }
+  .side-icon-btn:hover::before { opacity: 1; }
 
   @media (max-width: 820px) {
     .stage-wrapper { flex-direction: column; gap: 14px; }
     .side-action-panel { flex-direction: row; }
+    .side-icon-btn::before { right: auto; top: -36px; transform: translateX(-50%); left: 50%; }
     .dobble-disk { width: min(44vw, 42vh, 320px); height: min(44vw, 42vh, 320px); }
   }
   @media (max-width: 480px) {
@@ -328,7 +385,7 @@
       <div class="param-item">
         <span class="param-label">主題</span>
         <select id="theme-select" onchange="onThemeChange()">
-          <option value="moon_festival" selected>🥮 中秋節</option>
+          <option value="moon_festival" selected>🥮 中秋節與烘肉</option>
         </select>
       </div>
 
@@ -352,11 +409,12 @@
       </div>
 
       <div class="round-pill" id="round-indicator">0 / 10</div>
-      <div class="status-tag" id="gallery-status">⚡ 準備加速中...</div>
+      <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
 
+      <!-- 頂部按鈕組：已全面補齊 data-tooltip -->
       <div class="right-icons">
-        <button class="icon-btn btn-sync" title="重新快取" onclick="fetchImagesFromGitHub()">🔄</button>
-        <button class="icon-btn btn-view" title="檢視縮圖" onclick="toggleThumbList()">👁️</button>
+        <button class="icon-btn btn-sync" data-tooltip="🔄 重新整理與快取圖庫" onclick="fetchImagesFromGitHub()">🔄</button>
+        <button class="icon-btn btn-view" data-tooltip="👁️ 檢視/收闔31張圖庫" onclick="toggleThumbList()">👁️</button>
       </div>
     </div>
 
@@ -371,11 +429,12 @@
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」開始搶答</span></div>
     </div>
 
+    <!-- 右側操作面板：已全面補齊 data-tooltip -->
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" onclick="drawNextPair()">🎲</button>
-      <button class="side-icon-btn btn-shuffle" onclick="shuffleDeck()">🔀</button>
-      <button class="side-icon-btn btn-reset" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" onclick="showPodium()">🏆</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌" onclick="shuffleDeck()">🔀</button>
+      <button class="side-icon-btn btn-reset" data-tooltip="🔄 重置本局遊戲" onclick="resetGame()">🔄</button>
+      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前結算頒獎" onclick="showPodium()">🏆</button>
     </div>
   </div>
 
@@ -404,11 +463,39 @@
   </div>
 
 <script>
-  const hanziList = [
-    "lài-tah", "sàn-bah", "三層肉", "大同仔", "文旦", "月娘", "月餅", "牛排",
-    "玉兔挵藥仔", "米血", "卵仁酥", "金針菇", "俗麭", "香菇", "烘爐", "筊白筍",
-    "蚵仔", "蛤仔", "透抽", "棉仔糖", "番仔火", "番麥", "番薯", "黑輪",
-    "煙火", "煙腸", "嫦娥", "綠豆椪", "蝦仔", "蟳仔", "火炭"
+  // 🌟 31 張中秋圖定義（雙重特徵對齊：既有漢字也有拼音關鍵字，解決 lài-tah 與 sàn-bah 抓不到問題）
+  const itemDefinitions = [
+    { name: "打火機", key: "lài-tah", defaultFileName: "lài-tah.png" },
+    { name: "瘦肉", key: "sàn-bah", defaultFileName: "sàn-bah.png" },
+    { name: "三層肉", key: "三層肉", defaultFileName: "三層肉sam-tsân-bah.png" },
+    { name: "大同仔", key: "大同仔", defaultFileName: "大同仔tāi-tông-á.png" },
+    { name: "文旦", key: "文旦", defaultFileName: "文旦bûn-tàn.png" },
+    { name: "月娘", key: "月娘", defaultFileName: "月娘gue̍h-niû.png" },
+    { name: "月餅", key: "月餅", defaultFileName: "月餅gue̍h-piánn.png" },
+    { name: "牛排", key: "牛排", defaultFileName: "牛排gû-pâi.png" },
+    { name: "玉兔", key: "玉兔", defaultFileName: "玉兔挵藥仔gio̍k-thòo tsing-io̍k-á.png" },
+    { name: "米血", key: "米血", defaultFileName: "米血bí-hueh.png" },
+    { name: "卵仁酥", key: "卵仁酥", defaultFileName: "卵仁酥nñg-jîn-soo.png" },
+    { name: "金針菇", key: "金針菇", defaultFileName: "金針菇kim-tsiam-koo.png" },
+    { name: "俗麭", key: "俗麭", defaultFileName: "俗麭sio̍k-pháng.png" },
+    { name: "香菇", key: "香菇", defaultFileName: "香菇hiunn-koo.png" },
+    { name: "烘爐", key: "烘爐", defaultFileName: "烘爐hang-lôo.png" },
+    { name: "筊白筍", key: "筊白筍", defaultFileName: "筊白筍kha-pe̍h-sún.png" },
+    { name: "蚵仔", key: "蚵仔", defaultFileName: "蚵仔ô-á.png" },
+    { name: "蛤仔", key: "蛤仔", defaultFileName: "蛤仔ham-á.png" },
+    { name: "透抽", key: "透抽", defaultFileName: "透抽thàu-thiu.png" },
+    { name: "棉仔糖", key: "棉仔糖", defaultFileName: "棉仔糖mî-á thn̂g.png" },
+    { name: "番仔火", key: "番仔火", defaultFileName: "番仔火huan-á-hué.png" },
+    { name: "番麥", key: "番麥", defaultFileName: "番麥huan-be̍h.png" },
+    { name: "番薯", key: "番薯", defaultFileName: "番薯han-tsî.png" },
+    { name: "黑輪", key: "黑輪", defaultFileName: "黑輪oo-lián.png" },
+    { name: "煙火", key: "煙火", defaultFileName: "煙火ian-hué.png" },
+    { name: "煙腸", key: "煙腸", defaultFileName: "煙腸ian-tshiâng.png" },
+    { name: "嫦娥", key: "嫦娥", defaultFileName: "嫦娥Siông-ngôo.png" },
+    { name: "綠豆椪", key: "綠豆椪", defaultFileName: "綠豆椪li̍k-tāu-phòng.png" },
+    { name: "蝦仔", key: "蝦仔", defaultFileName: "蝦仔hê-á.png" },
+    { name: "蟳仔", key: "蟳仔", defaultFileName: "蟳仔tsîm-á.png" },
+    { name: "火炭", key: "火炭", defaultFileName: "火炭hué-thuànn.png" }
   ];
 
   let imageList = [];
@@ -417,9 +504,10 @@
   let teamScores = [];
   let currentCards = [null, null];
 
-  // 🌟 核心提速 1：記憶體預載物件池 (Image Preload Cache)
+  // 記憶體快取池
   const preloadedImageCache = {};
 
+  // 背景預載（保證抽題 0 秒延遲）
   function preloadAllAssets(items) {
     const statusTag = document.getElementById('gallery-status');
     let loadedCount = 0;
@@ -436,16 +524,21 @@
         }
       };
       img.onerror = () => {
-        loadedCount++;
-        if (loadedCount === total) {
-          statusTag.innerText = `🚀 已就緒 (秒開模式)`;
+        // 若主路徑失敗，嘗試備案路徑
+        if (item.fallbackLocal && img.src !== item.fallbackLocal) {
+          img.src = item.fallbackLocal;
+        } else {
+          loadedCount++;
+          if (loadedCount === total) {
+            statusTag.innerText = `🚀 已就緒 (秒開模式)`;
+          }
         }
       };
       img.src = item.src;
     });
   }
 
-  // 🌟 核心提速 2：智慧 API 搭配 CDN 加速網址轉換
+  // 🌟 核心：Unicode NFC 標準化比對 + GitHub 自動感應配對
   async function fetchImagesFromGitHub() {
     const statusTag = document.getElementById('gallery-status');
     statusTag.innerText = "⚡ 正在連線圖庫...";
@@ -454,10 +547,7 @@
     const repoName = pathParts[0] || 'spot-it-game';
     const ownerName = window.location.hostname.split('.')[0] || 'Biau7ling5-taiwanese';
 
-    // 優先使用 jsDelivr 高速 CDN 節點，延遲比 GitHub raw 低 5 倍以上
-    const cdnBase = `https://cdn.jsdelivr.net/gh/${ownerName}/${repoName}@main/theme/moon_festival/`;
     const localBase = `theme/moon_festival/`;
-
     const apiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/theme/moon_festival`;
 
     let files = [];
@@ -465,31 +555,39 @@
       const res = await fetch(apiUrl);
       if (res.ok) files = await res.json();
     } catch (e) {
-      console.warn("API 備案切換:", e);
+      console.warn("API 取得目錄失敗，切換靜態解析：", e);
     }
 
     if (Array.isArray(files) && files.length > 0) {
-      imageList = hanziList.map((hanzi, idx) => {
-        const matched = files.find(f => f.name.includes(hanzi));
-        const rawFileName = matched ? matched.name : `${hanzi}.png`;
+      // 將線上檔名全部進行 Unicode NFC 標準化，避免調符分解導致比對失敗
+      const normalizedFiles = files.map(f => ({
+        originalName: f.name,
+        normName: f.name.normalize('NFC')
+      }));
+
+      imageList = itemDefinitions.map((def, idx) => {
+        const normKey = def.key.normalize('NFC');
+        // 模糊匹配：檔名包含 key（支援漢字或拼音開頭）
+        const matched = normalizedFiles.find(f => f.normName.includes(normKey));
+        const finalFileName = matched ? matched.originalName : def.defaultFileName;
+
         return {
           id: `sym_${idx}`,
-          name: hanzi,
-          // 走 CDN 高速載入
-          src: cdnBase + encodeURIComponent(rawFileName),
-          fallbackLocal: localBase + encodeURIComponent(rawFileName)
+          name: def.name,
+          src: localBase + encodeURIComponent(finalFileName),
+          fallbackLocal: localBase + encodeURIComponent(def.defaultFileName)
         };
       });
     } else {
-      imageList = hanziList.map((hanzi, idx) => ({
+      // 靜態備用解析
+      imageList = itemDefinitions.map((def, idx) => ({
         id: `sym_${idx}`,
-        name: hanzi,
-        src: localBase + encodeURIComponent(`${hanzi}.png`),
-        fallbackLocal: localBase + encodeURIComponent(`${hanzi}.png`)
+        name: def.name,
+        src: localBase + encodeURIComponent(def.defaultFileName),
+        fallbackLocal: localBase + encodeURIComponent(def.defaultFileName)
       }));
     }
 
-    // 立即在背景啟動記憶體全預載！
     preloadAllAssets(imageList);
     renderThumbnails();
     resetGame();
@@ -550,7 +648,7 @@
 
   function shuffleDeck() {
     deck.sort(() => Math.random() - 0.5);
-    alert("牌堆已手動洗牌打亂！");
+    alert("牌堆已重新洗牌！");
   }
 
   function onModeChange() {
@@ -592,7 +690,6 @@
     return slots;
   }
 
-  // 渲染圓盤：直接從記憶體快取秒吐圖片
   function renderDisk(diskId, symbolIds) {
     const disk = document.getElementById(diskId);
     disk.innerHTML = '';
