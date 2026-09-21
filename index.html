@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Spot It! 主題式課堂教具</title>
+<title>Spot It!</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -431,16 +431,16 @@
 
     <!-- 右側操作面板：已全面補齊 data-tooltip -->
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 下一題" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌" onclick="shuffleDeck()">🔀</button>
-      <button class="side-icon-btn btn-reset" data-tooltip="🔄 重置本局遊戲" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前結算頒獎" onclick="showPodium()">🏆</button>
+      <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
+      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前頒獎" onclick="showPodium()">🏆</button>
     </div>
   </div>
 
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
-      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:18px;">🎉 優勝頒獎典禮 🎉</div>
+      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:18px;">🎉 頒獎典禮 🎉</div>
       <div class="podium-stage">
         <div class="podium-pillar rank-2">
           <div class="pillar-team" id="p2-name">-</div>
