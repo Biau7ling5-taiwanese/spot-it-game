@@ -352,10 +352,10 @@
       </div>
 
       <div class="round-pill" id="round-indicator">0 / 10</div>
-      <div class="status-tag" id="gallery-status">連線探測中...</div>
+      <div class="status-tag" id="gallery-status">⚡ 準備加速中...</div>
 
       <div class="right-icons">
-        <button class="icon-btn btn-sync" title="重新掃描 GitHub 圖庫" onclick="fetchImagesFromGitHub()">🔄</button>
+        <button class="icon-btn btn-sync" title="重新快取" onclick="fetchImagesFromGitHub()">🔄</button>
         <button class="icon-btn btn-view" title="檢視縮圖" onclick="toggleThumbList()">👁️</button>
       </div>
     </div>
@@ -379,7 +379,6 @@
     </div>
   </div>
 
-  <!-- 頒獎台 Modal -->
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
       <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:18px;">🎉 優勝頒獎典禮 🎉</div>
@@ -405,7 +404,6 @@
   </div>
 
 <script>
-  // 31 個純台文漢字基準（完全不依賴拼音）
   const hanziList = [
     "lài-tah", "sàn-bah", "三層肉", "大同仔", "文旦", "月娘", "月餅", "牛排",
     "玉兔挵藥仔", "米血", "卵仁酥", "金針菇", "俗麭", "香菇", "烘爐", "筊白筍",
@@ -419,64 +417,80 @@
   let teamScores = [];
   let currentCards = [null, null];
 
-  // 🌟 核心：直接向 GitHub 探測目錄，只要檔名「包含台文漢字」就自動配對成功！
+  // 🌟 核心提速 1：記憶體預載物件池 (Image Preload Cache)
+  const preloadedImageCache = {};
+
+  function preloadAllAssets(items) {
+    const statusTag = document.getElementById('gallery-status');
+    let loadedCount = 0;
+    const total = items.length;
+
+    items.forEach(item => {
+      const img = new Image();
+      img.onload = () => {
+        loadedCount++;
+        preloadedImageCache[item.name] = img.src;
+        statusTag.innerText = `⚡ 快取中 (${loadedCount}/${total})`;
+        if (loadedCount === total) {
+          statusTag.innerText = `🚀 已就緒 (秒開模式)`;
+        }
+      };
+      img.onerror = () => {
+        loadedCount++;
+        if (loadedCount === total) {
+          statusTag.innerText = `🚀 已就緒 (秒開模式)`;
+        }
+      };
+      img.src = item.src;
+    });
+  }
+
+  // 🌟 核心提速 2：智慧 API 搭配 CDN 加速網址轉換
   async function fetchImagesFromGitHub() {
     const statusTag = document.getElementById('gallery-status');
-    statusTag.innerText = "掃描圖庫中...";
+    statusTag.innerText = "⚡ 正在連線圖庫...";
 
-    // 動態判斷當前 GitHub 倉庫路徑
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const repoName = pathParts[0] || 'spot-it-game';
     const ownerName = window.location.hostname.split('.')[0] || 'Biau7ling5-taiwanese';
 
-    const possibleApiUrls = [
-      `https://api.github.com/repos/${ownerName}/${repoName}/contents/theme/moon_festival`,
-      `https://api.github.com/repos/${ownerName}/${repoName}/contents/themes/moon_festival`
-    ];
+    // 優先使用 jsDelivr 高速 CDN 節點，延遲比 GitHub raw 低 5 倍以上
+    const cdnBase = `https://cdn.jsdelivr.net/gh/${ownerName}/${repoName}@main/theme/moon_festival/`;
+    const localBase = `theme/moon_festival/`;
+
+    const apiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/theme/moon_festival`;
 
     let files = [];
-    for (const url of possibleApiUrls) {
-      try {
-        const res = await fetch(url);
-        if (res.ok) {
-          files = await res.json();
-          break;
-        }
-      } catch (e) {
-        console.warn("API 探測:", e);
-      }
+    try {
+      const res = await fetch(apiUrl);
+      if (res.ok) files = await res.json();
+    } catch (e) {
+      console.warn("API 備案切換:", e);
     }
 
     if (Array.isArray(files) && files.length > 0) {
-      // 成功從 GitHub 拿到了真實檔名列表！現在純以「漢字部分」比對：
       imageList = hanziList.map((hanzi, idx) => {
-        // 只要檔名含有該漢字（例如 "番麥" 能自動配對到 "番麥huan-be̍h.png"）
         const matched = files.find(f => f.name.includes(hanzi));
-        if (matched) {
-          return {
-            id: `sym_${idx}`,
-            name: hanzi,
-            src: matched.download_url || matched.path
-          };
-        } else {
-          return {
-            id: `sym_${idx}`,
-            name: hanzi,
-            src: `theme/moon_festival/${encodeURIComponent(hanzi)}.png`
-          };
-        }
+        const rawFileName = matched ? matched.name : `${hanzi}.png`;
+        return {
+          id: `sym_${idx}`,
+          name: hanzi,
+          // 走 CDN 高速載入
+          src: cdnBase + encodeURIComponent(rawFileName),
+          fallbackLocal: localBase + encodeURIComponent(rawFileName)
+        };
       });
-      statusTag.innerText = `已備 ${imageList.filter(x => x.src).length} / 31 張圖 (線上)`;
     } else {
-      // 備案：若 GitHub API 受限，直接用相對路徑載入
       imageList = hanziList.map((hanzi, idx) => ({
         id: `sym_${idx}`,
         name: hanzi,
-        src: `theme/moon_festival/${encodeURIComponent(hanzi)}.png`
+        src: localBase + encodeURIComponent(`${hanzi}.png`),
+        fallbackLocal: localBase + encodeURIComponent(`${hanzi}.png`)
       }));
-      statusTag.innerText = `已備 31 張圖 (靜態)`;
     }
 
+    // 立即在背景啟動記憶體全預載！
+    preloadAllAssets(imageList);
     renderThumbnails();
     resetGame();
   }
@@ -484,13 +498,12 @@
   function renderThumbnails() {
     const container = document.getElementById('thumb-container');
     container.innerHTML = '';
-    imageList.forEach((item, idx) => {
+    imageList.forEach((item) => {
       const div = document.createElement('div');
       div.className = 'thumb-item';
       div.title = item.name;
       div.innerHTML = `
-        <img src="${item.src}" alt="${item.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-        <span class="symbol-fallback" style="display:none; font-size:10px;">${item.name}</span>
+        <img src="${item.src}" alt="${item.name}" onerror="if(this.dataset.tried!=='1'){this.dataset.tried='1'; this.src='${item.fallbackLocal}';}">
       `;
       container.appendChild(div);
     });
@@ -537,7 +550,7 @@
 
   function shuffleDeck() {
     deck.sort(() => Math.random() - 0.5);
-    alert("牌堆已重新洗牌！");
+    alert("牌堆已手動洗牌打亂！");
   }
 
   function onModeChange() {
@@ -579,6 +592,7 @@
     return slots;
   }
 
+  // 渲染圓盤：直接從記憶體快取秒吐圖片
   function renderDisk(diskId, symbolIds) {
     const disk = document.getElementById(diskId);
     disk.innerHTML = '';
@@ -607,22 +621,28 @@
       el.style.transform = `rotate(${angle}deg)`;
 
       const currentItem = imageList[symId];
-      if (currentItem && currentItem.src) {
+      if (currentItem) {
+        const cachedSrc = preloadedImageCache[currentItem.name] || currentItem.src;
         const img = document.createElement('img');
-        img.src = currentItem.src;
+        img.src = cachedSrc;
         img.alt = currentItem.name;
         img.onerror = function() {
-          this.style.display = 'none';
-          const span = document.createElement('div');
-          span.className = 'symbol-fallback';
-          span.innerText = currentItem.name || `圖案 ${symId + 1}`;
-          el.appendChild(span);
+          if (this.dataset.fallback !== "1" && currentItem.fallbackLocal) {
+            this.dataset.fallback = "1";
+            this.src = currentItem.fallbackLocal;
+          } else {
+            this.style.display = 'none';
+            const span = document.createElement('div');
+            span.className = 'symbol-fallback';
+            span.innerText = currentItem.name || `圖案 ${symId + 1}`;
+            el.appendChild(span);
+          }
         };
         el.appendChild(img);
       } else {
         const span = document.createElement('div');
         span.className = 'symbol-fallback';
-        span.innerText = currentItem ? currentItem.name : `圖案 ${symId + 1}`;
+        span.innerText = `圖案 ${symId + 1}`;
         el.appendChild(span);
       }
       disk.appendChild(el);
@@ -711,7 +731,6 @@
     }
   });
 
-  // 網頁啟動：自動向 GitHub 索取目錄並模糊配對漢字
   renderScoreboard();
   fetchImagesFromGitHub();
 </script>
