@@ -86,10 +86,15 @@
     background: #23274c;
     color: #fff;
     border: 1px solid #3f477c;
-    padding: 4px 6px;
+    padding: 4px 8px;
     border-radius: 6px;
     font-size: clamp(11px, 1.2vw, 13px);
     outline: none;
+  }
+  #theme-select {
+    border-color: #ff9800;
+    color: #ffd54f;
+    font-weight: bold;
   }
   input[type="number"] { width: 48px; text-align: center; }
 
@@ -204,7 +209,7 @@
     cursor: pointer;
   }
 
-  /* 計分板區 (橫向捲動自適應) */
+  /* 計分板區 */
   .scoreboard {
     display: flex;
     flex-wrap: wrap;
@@ -375,38 +380,17 @@
   }
   .side-icon-btn:hover::before { opacity: 1; }
 
-  /* ===== 響應式斷點 (RWD 關鍵) ===== */
+  /* 響應式斷點 */
   @media (max-width: 820px) {
-    .stage-wrapper {
-      flex-direction: column;
-      gap: 14px;
-    }
-    .side-action-panel {
-      flex-direction: row;
-      width: auto;
-      padding: 8px 14px;
-    }
-    .side-icon-btn::before {
-      right: auto;
-      top: -36px;
-      transform: translateX(-50%);
-      left: 50%;
-    }
-    .dobble-disk {
-      width: min(44vw, 42vh, 320px);
-      height: min(44vw, 42vh, 320px);
-    }
+    .stage-wrapper { flex-direction: column; gap: 14px; }
+    .side-action-panel { flex-direction: row; width: auto; padding: 8px 14px; }
+    .side-icon-btn::before { right: auto; top: -36px; transform: translateX(-50%); left: 50%; }
+    .dobble-disk { width: min(44vw, 42vh, 320px); height: min(44vw, 42vh, 320px); }
   }
 
   @media (max-width: 480px) {
-    .arena {
-      flex-direction: column;
-      gap: 12px;
-    }
-    .dobble-disk {
-      width: min(72vw, 36vh, 260px);
-      height: min(72vw, 36vh, 260px);
-    }
+    .arena { flex-direction: column; gap: 12px; }
+    .dobble-disk { width: min(72vw, 36vh, 260px); height: min(72vw, 36vh, 260px); }
   }
 
   /* 頒獎台 Modal */
@@ -504,9 +488,19 @@
     <h1 class="game-title">Spot It!</h1>
   </div>
 
-  <!-- 緊湊一體化控制列 -->
+  <!-- 緊湊一體化控制列 (加入活動主題下拉選單) -->
   <div class="unified-bar-wrap">
     <div class="unified-bar">
+      <!-- 🌟 活動主題下拉選單 -->
+      <div class="param-item">
+        <span class="param-label">主題</span>
+        <select id="theme-select" onchange="onThemeChange()">
+          <option value="moon_festival" selected>🥮 中秋節與烘肉</option>
+          <!-- 未來若擴充其他主題，直接在此新增一行，例如： -->
+          <!-- <option value="science">⚗️ 理化器材</option> -->
+        </select>
+      </div>
+
       <div class="param-item">
         <span class="param-label">模式</span>
         <select id="mode-select" onchange="onModeChange()">
@@ -531,7 +525,7 @@
 
       <!-- 柔和質感小圖示按鈕組 -->
       <div class="right-icons">
-        <label for="img-input" class="icon-btn btn-upload" data-tooltip="上傳圖片">➕</label>
+        <label for="img-input" class="icon-btn btn-upload" data-tooltip="上傳圖片到本主題">➕</label>
         <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
 
         <button class="icon-btn btn-save" data-tooltip="確認存入後台" onclick="saveImagesToDB()">💾</button>
@@ -606,38 +600,77 @@
   </div>
 
 <script>
-  // ===== GitHub 預設中秋 31 張台文圖檔清單 =====
-  const defaultAutumnFilenames = [
-    "蛋黃酥.png", "綠豆椪.png", "柚仔.png", "嫦娥.png", "玉兔.png",
-    "吳剛.png", "雞翼仔.png", "番麥.png", "番椒仔.png", "金針菇.png",
-    "煙腸.png", "甜不辣.png", "米血.png", "豬肉片.png", "牛肉.png",
-    "香菇.png", "蚶仔.png", "蝦仔.png", "吐司.png", "麻糬.png",
-    "棉花糖.png", "豆干.png", "筊白筍.png", "番薯.png", "雞腿.png",
-    "魷魚.png", "木炭.png", "烘肉架.png", "點火機仔.png", "煙火.png", "月餅.png"
-  ];
+  // ===== 🌟 31 張中秋節台文圖檔名稱 =====
+  const themePresets = {
+    moon_festival: [
+      "lài-tah",
+      "sàn-bah",
+      "三層肉sam-tsân-bah",
+      "大同仔tāi-tông-á",
+      "文旦bûn-tàn",
+      "月娘gue̍h-niû",
+      "月餅gue̍h-piánn",
+      "牛排gû-pâi",
+      "玉兔挵藥仔gio̍k-thòo tsing-io̍k-á",
+      "米血bí-hueh",
+      "卵仁酥nñg-jîn-soo",
+      "金針菇kim-tsiam-koo",
+      "俗麭sio̍k-pháng",
+      "香菇hiunn-koo",
+      "烘爐hang-lôo",
+      "筊白筍kha-pe̍h-sún",
+      "蚵仔ô-á",
+      "蛤仔ham-á",
+      "透抽thàu-thiu",
+      "棉仔糖mî-á thn̂g",
+      "番仔火huan-á-hué",
+      "番麥huan-be̍h",
+      "番薯han-tsî",
+      "黑輪oo-lián",
+      "煙火ian-hué",
+      "煙腸ian-tshiâng",
+      "嫦娥Siông-ngôo",
+      "綠豆椪li̍k-tāu-phòng",
+      "蝦仔hê-á",
+      "蟳仔tsîm-á",
+      "火炭hué-thuànn"
+    ]
+  };
 
-  // 自動構建預設圖庫陣列（直接指向 GitHub 倉庫上的 themes/autumn/ 資料夾）
-  const githubDefaultImages = defaultAutumnFilenames.map((fname, idx) => ({
-    id: 'gh_' + idx,
-    name: fname.replace('.png', ''),
-    src: `themes/autumn/${encodeURIComponent(fname)}`
-  }));
+  // 智慧路徑探測：優先抓取 theme/moon_festival/，同時具備相容 themes/ 的備用鏈
+  function buildThemeImages(themeKey) {
+    const rawList = themePresets[themeKey] || [];
+    return rawList.map((baseName, idx) => {
+      const filename = baseName.endsWith('.png') || baseName.endsWith('.jpg') ? baseName : `${baseName}.png`;
+      return {
+        id: `${themeKey}_${idx}`,
+        name: baseName.split(/[a-z]/i)[0] || baseName, // 取得中文名
+        fullName: baseName,
+        // 首選：theme/moon_festival/檔名.png
+        src: `theme/${themeKey}/${encodeURIComponent(filename)}`,
+        // 備案：themes/moon_festival/檔名.png
+        fallbackSrc1: `themes/${themeKey}/${encodeURIComponent(filename)}`,
+        fallbackSrc2: `theme/${themeKey}/${encodeURIComponent(baseName)}.jpg`,
+        fallbackSrc3: `themes/${themeKey}/${encodeURIComponent(baseName)}.jpg`
+      };
+    });
+  }
 
-  // 預設直接採用 GitHub 雲端圖庫（31張）
-  let imageList = [...githubDefaultImages];
+  let currentThemeKey = 'moon_festival';
+  let imageList = buildThemeImages('moon_festival');
+
   let deck = [];
   let currentRound = 0;
   let teamScores = [];
   let db = null;
   let currentCards = [null, null];
 
-  // 台語正字辭典備案（圖檔讀取異常時自動退回文字顯示）
-  const defaultSymbols = [
-    "蛋黃酥","綠豆椪","柚仔","嫦娥","玉兔","吳剛","雞翼仔","番麥",
-    "番椒仔","金針菇","煙腸","甜不辣","米血","豬肉片","牛肉","香菇",
-    "蚶仔","蝦仔","吐司","麻糬","棉花糖","豆干","筊白筍","番薯",
-    "雞腿","魷魚","木炭","烘肉架","點火機仔","煙火","月餅"
-  ];
+  function onThemeChange() {
+    currentThemeKey = document.getElementById('theme-select').value;
+    imageList = buildThemeImages(currentThemeKey);
+    renderThumbnails();
+    resetGame();
+  }
 
   function playVictorySound() {
     try {
@@ -666,7 +699,7 @@
         osc.stop(ctx.currentTime + n.start + n.dur);
       });
     } catch (e) {
-      console.warn("音效播放限制：", e);
+      console.warn("音效限制：", e);
     }
   }
 
@@ -709,7 +742,7 @@
   }
 
   function initDB() {
-    const request = indexedDB.open("SpotItGameDB", 2);
+    const request = indexedDB.open("SpotItGameDB", 5);
     request.onupgradeneeded = function(e) {
       const dbInstance = e.target.result;
       if (!dbInstance.objectStoreNames.contains("images")) {
@@ -732,12 +765,12 @@
     store.clear();
 
     imageList.forEach(item => {
-      store.add({ src: item.src, name: item.name });
+      store.add({ src: item.src, name: item.name, fullName: item.fullName });
     });
 
     tx.oncomplete = function() {
       document.getElementById('thumb-container').style.display = 'none';
-      alert(`🎉 成功！已將 ${imageList.length} 張圖存入後台，縮圖已自動收合！`);
+      alert(`🎉 成功！已將當前主題的 ${imageList.length} 張圖存入後台！`);
     };
     tx.onerror = function() {
       alert("儲存失敗，請檢查儲存空間。");
@@ -750,12 +783,8 @@
     const store = tx.objectStore("images");
     const req = store.getAll();
     req.onsuccess = function() {
-      if (req.result && req.result.length > 0) {
-        imageList = req.result;
-      } else {
-        // 若使用者尚未手動上傳新圖覆蓋，一律預設載入 GitHub 的 31 張中秋圖
-        imageList = [...githubDefaultImages];
-      }
+      // 預設直接從 GitHub 的 theme/moon_festival/ 讀取
+      imageList = buildThemeImages(currentThemeKey);
       renderThumbnails();
       resetGame();
       document.getElementById('thumb-container').style.display = 'none';
@@ -804,7 +833,8 @@
           imageList.push({
             id: Date.now() + Math.random(),
             src: cleanedUrl,
-            name: file.name
+            name: file.name.replace(/\.[^/.]+$/, ""),
+            fullName: file.name
           });
           processed++;
           if (processed === files.length) {
@@ -826,7 +856,7 @@
       const div = document.createElement('div');
       div.className = 'thumb-item';
       div.innerHTML = `
-        <img src="${item.src}" alt="${item.name}">
+        <img src="${item.src}" alt="${item.fullName}" onerror="handleImgError(this, ${idx})">
         <button class="thumb-del" onclick="removeSingleImage(${idx})">×</button>
       `;
       container.appendChild(div);
@@ -837,6 +867,35 @@
     document.getElementById('gallery-status').innerText = `已備 ${imageList.length} / ${required} 張圖`;
   }
 
+  // 智慧路徑容錯降級處理
+  function handleImgError(imgEl, idx) {
+    const item = imageList[idx];
+    if (!item) return;
+
+    if (!imgEl.dataset.tryCount) imgEl.dataset.tryCount = "1";
+    const count = parseInt(imgEl.dataset.tryCount);
+
+    if (count === 1 && item.fallbackSrc1) {
+      imgEl.dataset.tryCount = "2";
+      imgEl.src = item.fallbackSrc1;
+    } else if (count === 2 && item.fallbackSrc2) {
+      imgEl.dataset.tryCount = "3";
+      imgEl.src = item.fallbackSrc2;
+    } else if (count === 3 && item.fallbackSrc3) {
+      imgEl.dataset.tryCount = "4";
+      imgEl.src = item.fallbackSrc3;
+    } else {
+      imgEl.style.display = 'none';
+      const parent = imgEl.parentElement;
+      if (parent && !parent.querySelector('.symbol-fallback')) {
+        const span = document.createElement('div');
+        span.className = 'symbol-fallback';
+        span.innerText = item.name || item.fullName || `圖案 ${idx + 1}`;
+        parent.appendChild(span);
+      }
+    }
+  }
+
   function removeSingleImage(index) {
     imageList.splice(index, 1);
     renderThumbnails();
@@ -844,7 +903,7 @@
   }
 
   function clearAllImages() {
-    if (confirm("確定要清空圖庫嗎？（將暫時退回純文字台語模式）")) {
+    if (confirm("確定要清空圖庫嗎？（重整網頁可重新載入 GitHub 預設圖庫）")) {
       imageList = [];
       if (db) {
         const tx = db.transaction("images", "readwrite");
@@ -993,20 +1052,13 @@
       if (currentItem && currentItem.src) {
         const img = document.createElement('img');
         img.src = currentItem.src;
-        img.alt = currentItem.name || `圖案 ${symId + 1}`;
-        // 容錯處理：若圖片未讀取成功，自動降級顯示台文文字卡
-        img.onerror = function() {
-          this.style.display = 'none';
-          const span = document.createElement('div');
-          span.className = 'symbol-fallback';
-          span.innerText = currentItem.name || defaultSymbols[symId] || `圖案 ${symId + 1}`;
-          el.appendChild(span);
-        };
+        img.alt = currentItem.fullName || currentItem.name;
+        img.onerror = function() { handleImgError(this, symId); };
         el.appendChild(img);
       } else {
         const span = document.createElement('div');
         span.className = 'symbol-fallback';
-        span.innerText = defaultSymbols[symId] || `圖案 ${symId + 1}`;
+        span.innerText = currentItem ? currentItem.name : `圖案 ${symId + 1}`;
         el.appendChild(span);
       }
       disk.appendChild(el);
