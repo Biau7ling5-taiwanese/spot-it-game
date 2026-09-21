@@ -18,7 +18,7 @@
     overflow-x: hidden;
   }
 
-  /* 活潑遊戲化標題 */
+  /* 標題 */
   .header-banner {
     display: flex;
     align-items: center;
@@ -48,7 +48,7 @@
     50% { transform: rotate(12deg) scale(1.08); }
   }
 
-  /* 緊湊一體化控制列 */
+  /* 控制列 */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
@@ -191,7 +191,6 @@
     mix-blend-mode: multiply;
   }
   
-  /* 刪除小按鈕 (紅色 ×) */
   .thumb-del {
     position: absolute;
     top: -4px;
@@ -226,6 +225,7 @@
     width: 96%;
     max-width: 1260px;
     margin-bottom: clamp(8px, 1.5vw, 14px);
+    min-height: 50px;
   }
   .team-card {
     background: #181b33;
@@ -296,7 +296,6 @@
     will-change: transform, left, top;
   }
 
-  /* 核心去白底：色彩增值模式 */
   .symbol-item img {
     width: 100%;
     height: 100%;
@@ -481,7 +480,6 @@
     box-shadow: 0 -4px 18px rgba(0,0,0,0.4);
   }
   
-  /* 名次色塊設定（改為冠軍、亞軍、季軍） */
   .rank-1 .pillar-block { height: 130px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); color: #3e2723; }
   .rank-2 .pillar-block { height: 95px; background: linear-gradient(180deg, #cfd8dc 0%, #78909c 100%); color: #263238; }
   .rank-3 .pillar-block { height: 68px; background: linear-gradient(180deg, #d7ccc8 0%, #8d6e63 100%); color: #3e2723; }
@@ -557,7 +555,7 @@
     </div>
   </div>
 
-  <!-- 頒獎台彈窗：柱子文字改為 冠軍、亞軍、季軍 -->
+  <!-- 頒獎台彈窗 -->
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
       <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:20px; text-shadow:0 0 12px rgba(255,213,79,0.5);">🎉 優勝頒獎典禮 🎉</div>
@@ -634,7 +632,7 @@
     const total = items.length;
 
     if (total === 0) {
-      statusTag.innerText = `已備 0 張圖`;
+      if (statusTag) statusTag.innerText = `已備 0 張圖`;
       return;
     }
 
@@ -643,9 +641,9 @@
       img.onload = () => {
         loadedCount++;
         preloadedImageCache[item.name] = img.src;
-        statusTag.innerText = `⚡ 快取中 (${loadedCount}/${total})`;
+        if (statusTag) statusTag.innerText = `⚡ 快取中 (${loadedCount}/${total})`;
         if (loadedCount === total) {
-          statusTag.innerText = `🚀 ${total}張圖全數就緒！`;
+          if (statusTag) statusTag.innerText = `🚀 ${total}張圖全數就緒！`;
         }
       };
       img.onerror = () => {
@@ -653,7 +651,7 @@
           img.src = item.fallbackLocal;
         } else {
           loadedCount++;
-          if (loadedCount === total) {
+          if (loadedCount === total && statusTag) {
             statusTag.innerText = `🚀 ${total}張圖全數就緒！`;
           }
         }
@@ -662,9 +660,10 @@
     });
   }
 
+  // 100% 不卡死連線邏輯
   async function fetchImagesFromGitHub() {
     const statusTag = document.getElementById('gallery-status');
-    statusTag.innerText = "⚡ 正在連線圖庫...";
+    if (statusTag) statusTag.innerText = "⚡ 正在連線圖庫...";
 
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const repoName = pathParts[0] || 'spot-it-game';
@@ -678,7 +677,7 @@
       const res = await fetch(apiUrl);
       if (res.ok) files = await res.json();
     } catch (e) {
-      console.warn("API 取得目錄失敗，切換靜態解析：", e);
+      console.warn("API 取得目錄失敗，切換內建備援解析：", e);
     }
 
     if (Array.isArray(files) && files.length > 0) {
@@ -707,6 +706,7 @@
         };
       });
     } else {
+      // 網路超時或限制時，直接秒開內建圖庫
       imageList = itemDefinitions.map((def, idx) => ({
         id: `sym_${idx}`,
         name: def.name,
@@ -720,37 +720,43 @@
     resetGame();
   }
 
-  document.getElementById('img-input').addEventListener('change', function(e) {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
+  // 上傳圖片安全監聽
+  const imgInput = document.getElementById('img-input');
+  if (imgInput) {
+    imgInput.addEventListener('change', function(e) {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
 
-    let processed = 0;
-    files.forEach(file => {
-      const reader = new FileReader();
-      reader.onload = (evt) => {
-        const cleanName = file.name.replace(/\.[^/.]+$/, "");
-        const newItem = {
-          id: Date.now() + Math.random(),
-          src: evt.target.result,
-          name: cleanName
+      let processed = 0;
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = (evt) => {
+          const cleanName = file.name.replace(/\.[^/.]+$/, "");
+          const newItem = {
+            id: Date.now() + Math.random(),
+            src: evt.target.result,
+            name: cleanName
+          };
+          imageList.push(newItem);
+          preloadedImageCache[cleanName] = evt.target.result;
+          processed++;
+
+          if (processed === files.length) {
+            renderThumbnails();
+            resetGame();
+            const drawer = document.getElementById('thumb-container');
+            if (drawer) drawer.style.display = 'flex';
+          }
         };
-        imageList.push(newItem);
-        preloadedImageCache[cleanName] = evt.target.result;
-        processed++;
-
-        if (processed === files.length) {
-          renderThumbnails();
-          resetGame();
-          document.getElementById('thumb-container').style.display = 'flex';
-        }
-      };
-      reader.readAsDataURL(file);
+        reader.readAsDataURL(file);
+      });
+      this.value = '';
     });
-    this.value = '';
-  });
+  }
 
   function renderThumbnails() {
     const container = document.getElementById('thumb-container');
+    if (!container) return;
     container.innerHTML = '';
     imageList.forEach((item, idx) => {
       const div = document.createElement('div');
@@ -764,9 +770,11 @@
       container.appendChild(div);
     });
 
-    const n = parseInt(document.getElementById('mode-select').value);
+    const modeSelect = document.getElementById('mode-select');
+    const n = modeSelect ? parseInt(modeSelect.value) : 5;
     const required = n * n + n + 1;
-    document.getElementById('gallery-status').innerText = `已備 ${imageList.length} / ${required} 張圖`;
+    const statusTag = document.getElementById('gallery-status');
+    if (statusTag) statusTag.innerText = `已備 ${imageList.length} / ${required} 張圖`;
   }
 
   function removeSingleImage(index) {
@@ -787,6 +795,7 @@
 
   function toggleThumbList() {
     const container = document.getElementById('thumb-container');
+    if (!container) return;
     const isHidden = window.getComputedStyle(container).display === 'none';
     container.style.display = isHidden ? 'flex' : 'none';
   }
@@ -814,14 +823,17 @@
   }
 
   function resetGame() {
-    const n = parseInt(document.getElementById('mode-select').value);
+    const modeSelect = document.getElementById('mode-select');
+    const n = modeSelect ? parseInt(modeSelect.value) : 5;
     const baseCards = buildProjectivePlane(n);
     deck = [...baseCards].sort(() => Math.random() - 0.5);
     currentRound = 0;
     currentCards = [null, null];
     updateRoundBadge();
-    document.getElementById('disk-left').innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
-    document.getElementById('disk-right').innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
+    const dl = document.getElementById('disk-left');
+    const dr = document.getElementById('disk-right');
+    if (dl) dl.innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
+    if (dr) dr.innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
   }
 
   function shuffleDeck() {
@@ -839,8 +851,10 @@
   }
 
   function updateRoundBadge() {
-    const total = parseInt(document.getElementById('total-rounds').value) || 10;
-    document.getElementById('round-indicator').innerText = `${currentRound} / ${total}`;
+    const totalInput = document.getElementById('total-rounds');
+    const total = totalInput ? (parseInt(totalInput.value) || 10) : 10;
+    const badge = document.getElementById('round-indicator');
+    if (badge) badge.innerText = `${currentRound} / ${total}`;
   }
 
   function getDistributedSlots(count, radius) {
@@ -871,6 +885,7 @@
 
   function renderDisk(diskId, symbolIds) {
     const disk = document.getElementById(diskId);
+    if (!disk) return;
     disk.innerHTML = '';
     
     const rect = disk.getBoundingClientRect();
@@ -926,13 +941,15 @@
   }
 
   function drawNextPair() {
-    const totalRounds = parseInt(document.getElementById('total-rounds').value) || 10;
+    const totalInput = document.getElementById('total-rounds');
+    const totalRounds = totalInput ? (parseInt(totalInput.value) || 10) : 10;
     if (currentRound >= totalRounds) {
       showPodium();
       return;
     }
     if (deck.length < 2) {
-      const n = parseInt(document.getElementById('mode-select').value);
+      const modeSelect = document.getElementById('mode-select');
+      const n = modeSelect ? parseInt(modeSelect.value) : 5;
       deck = buildProjectivePlane(n).sort(() => Math.random() - 0.5);
     }
 
@@ -948,10 +965,13 @@
     }
   }
 
-  // 計分板
+  // 計分板渲染
   function renderScoreboard() {
-    const count = parseInt(document.getElementById('team-count').value) || 1;
+    const countInput = document.getElementById('team-count');
+    const count = countInput ? (parseInt(countInput.value) || 1) : 6;
     const board = document.getElementById('scoreboard');
+    if (!board) return;
+
     while (teamScores.length < count) teamScores.push(0);
     if (teamScores.length > count) teamScores = teamScores.slice(0, count);
 
@@ -973,29 +993,38 @@
 
   function changeScore(idx, delta) {
     teamScores[idx] = Math.max(0, teamScores[idx] + delta);
-    document.getElementById(`score-${idx}`).innerText = teamScores[idx];
+    const scoreEl = document.getElementById(`score-${idx}`);
+    if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 100% 播放保證的頒獎音樂
-  const victoryAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-  victoryAudio.volume = 0.85;
+  // 音效安全獲取
+  let audioPlayerInstance = null;
+  function getVictoryAudio() {
+    if (!audioPlayerInstance) {
+      try {
+        audioPlayerInstance = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
+        audioPlayerInstance.volume = 0.85;
+      } catch (e) {
+        console.warn("音訊物件初始化備案：", e);
+      }
+    }
+    return audioPlayerInstance;
+  }
 
   let podiumTimers = [];
-
   function clearPodiumTimers() {
     podiumTimers.forEach(t => clearTimeout(t));
     podiumTimers = [];
   }
 
-  // 🏆 核心：同分並列排名演算法 + 3秒前奏 + 2.5秒逐一揭榜
+  // 🏆 頒獎：同分並列 + 音樂先播3秒 + 間隔2.5秒逐一揭榜
   function showPodium() {
     clearPodiumTimers();
 
-    // 1. 將組別依分數由大到小排序
     const list = teamScores.map((score, idx) => ({ name: `第 ${idx + 1} 組`, score }));
     list.sort((a, b) => b.score - a.score);
 
-    // 2. 演算法：將相同分數的組別「並列歸類」
+    // 同分自動並列歸類
     const scoreGroups = [];
     list.forEach(item => {
       const existing = scoreGroups.find(g => g.score === item.score);
@@ -1006,59 +1035,75 @@
       }
     });
 
-    // 3. 填入冠軍、亞軍、季軍（同分時合併顯示組別）
     const g1 = scoreGroups[0];
     const g2 = scoreGroups[1];
     const g3 = scoreGroups[2];
 
-    document.getElementById('p1-name').innerText = g1 ? g1.teams.join("、") : '-';
-    document.getElementById('p1-score').innerText = g1 ? `${g1.score} 分` : '0 分';
+    const p1n = document.getElementById('p1-name');
+    const p1s = document.getElementById('p1-score');
+    const p2n = document.getElementById('p2-name');
+    const p2s = document.getElementById('p2-score');
+    const p3n = document.getElementById('p3-name');
+    const p3s = document.getElementById('p3-score');
 
-    document.getElementById('p2-name').innerText = g2 ? g2.teams.join("、") : '-';
-    document.getElementById('p2-score').innerText = g2 ? `${g2.score} 分` : '0 分';
+    if (p1n) p1n.innerText = g1 ? g1.teams.join("、") : '-';
+    if (p1s) p1s.innerText = g1 ? `${g1.score} 分` : '0 分';
 
-    document.getElementById('p3-name').innerText = g3 ? g3.teams.join("、") : '-';
-    document.getElementById('p3-score').innerText = g3 ? `${g3.score} 分` : '0 分';
+    if (p2n) p2n.innerText = g2 ? g2.teams.join("、") : '-';
+    if (p2s) p2s.innerText = g2 ? `${g2.score} 分` : '0 分';
 
-    // 4. 重置所有柱子為完全隱形
+    if (p3n) p3n.innerText = g3 ? g3.teams.join("、") : '-';
+    if (p3s) p3s.innerText = g3 ? `${g3.score} 分` : '0 分';
+
+    // 重置柱子為隱藏
     const p1 = document.querySelector('.rank-1');
     const p2 = document.querySelector('.rank-2');
     const p3 = document.querySelector('.rank-3');
     
     [p1, p2, p3].forEach(p => {
-      p.classList.remove('revealed');
-      p.style.visibility = 'hidden';
+      if (p) {
+        p.classList.remove('revealed');
+        p.style.visibility = 'hidden';
+      }
     });
 
-    // 5. 顯示頒獎彈窗並立即下音樂
-    document.getElementById('podium-modal').style.display = 'flex';
+    const modal = document.getElementById('podium-modal');
+    if (modal) modal.style.display = 'flex';
 
-    try {
-      victoryAudio.currentTime = 0;
-      victoryAudio.play().catch(err => console.log("音訊授權:", err));
-    } catch (e) {}
+    // 播放音樂
+    const audio = getVictoryAudio();
+    if (audio) {
+      try {
+        audio.currentTime = 0;
+        audio.play().catch(err => console.log("音訊授權:", err));
+      } catch (e) {}
+    }
 
-    // 6. 🌟 音樂先播放 3 秒後公告季軍，之後每隔 2.5 秒揭曉下一名次
+    // 🌟 音樂先放 3 秒公告季軍，各名次間隔 2.5 秒
     podiumTimers.push(setTimeout(() => {
-      p3.classList.add('revealed');
-    }, 3000)); // 3.0 秒：前奏完畢，揭曉【🥉 季軍】
+      if (p3) p3.classList.add('revealed');
+    }, 3000)); // 3.0 秒：揭曉【🥉 季軍】
 
     podiumTimers.push(setTimeout(() => {
-      p2.classList.add('revealed');
-    }, 5500)); // 5.5 秒（間隔 2.5 秒）：揭曉【🥈 亞軍】
+      if (p2) p2.classList.add('revealed');
+    }, 5500)); // 5.5 秒：揭曉【🥈 亞軍】
 
     podiumTimers.push(setTimeout(() => {
-      p1.classList.add('revealed');
-    }, 8000)); // 8.0 秒（間隔 2.5 秒）：音樂高潮，揭曉【👑 冠軍】！
+      if (p1) p1.classList.add('revealed');
+    }, 8000)); // 8.0 秒：揭曉【👑 冠軍】！
   }
 
   function closePodium() {
     clearPodiumTimers();
-    document.getElementById('podium-modal').style.display = 'none';
-    try {
-      victoryAudio.pause();
-      victoryAudio.currentTime = 0;
-    } catch (e) {}
+    const modal = document.getElementById('podium-modal');
+    if (modal) modal.style.display = 'none';
+    const audio = getVictoryAudio();
+    if (audio) {
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+      } catch (e) {}
+    }
   }
 
   window.addEventListener('keydown', (e) => {
@@ -1075,8 +1120,25 @@
     }
   });
 
-  renderScoreboard();
-  fetchImagesFromGitHub();
+  // 🛡️ 安全啟動引導，確保計分板與圖庫 100% 成功渲染
+  function safeInit() {
+    try {
+      renderScoreboard();
+    } catch (e) {
+      console.error("計分板初始化失敗：", e);
+    }
+    try {
+      fetchImagesFromGitHub();
+    } catch (e) {
+      console.error("圖庫載入失敗：", e);
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', safeInit);
+  } else {
+    safeInit();
+  }
 </script>
 </body>
 </html>
