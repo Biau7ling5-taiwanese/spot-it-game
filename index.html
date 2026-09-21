@@ -409,7 +409,6 @@
     z-index: 9999;
   }
   .podium-box {
-    position: relative;
     background: linear-gradient(180deg, #1f2547 0%, #13172e 100%);
     border: 2px solid #ffb300;
     border-radius: 20px;
@@ -469,19 +468,6 @@
   .rank-1 .pillar-block { height: 130px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); color: #3e2723; }
   .rank-2 .pillar-block { height: 95px; background: linear-gradient(180deg, #cfd8dc 0%, #78909c 100%); color: #263238; }
   .rank-3 .pillar-block { height: 68px; background: linear-gradient(180deg, #d7ccc8 0%, #8d6e63 100%); color: #3e2723; }
-
-  /* 🌟 幽靈背景 YouTube 播放器：位於視窗背後，大小極小，不顯示任何畫面但保證聲音正常撥放 */
-  .ghost-yt-container {
-    position: absolute;
-    bottom: 5px;
-    right: 5px;
-    width: 1px;
-    height: 1px;
-    opacity: 0.01;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: -1;
-  }
 </style>
 </head>
 <body>
@@ -550,14 +536,14 @@
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌" onclick="shuffleDeck()">🔀</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" data-tooltip="🏆 頒獎" onclick="showPodium()">🏆</button>
+      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前頒獎" onclick="showPodium()">🏆</button>
     </div>
   </div>
 
   <!-- 頒獎台彈窗 -->
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
-      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:20px; text-shadow:0 0 12px rgba(255,213,79,0.5);">🎉 頒獎 🎉</div>
+      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:20px; text-shadow:0 0 12px rgba(255,213,79,0.5);">🎉 優勝頒獎典禮 🎉</div>
       
       <div class="podium-stage">
         <!-- 亞軍柱 -->
@@ -581,11 +567,6 @@
       </div>
 
       <button style="padding:10px 24px; border-radius:8px; background:linear-gradient(180deg, #0070f3 0%, #0051b3 100%); color:#fff; border:none; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(0,112,243,0.4);" onclick="closePodium()">關閉結算</button>
-
-      <!-- 隱藏但正常渲染的 YouTube 容器 -->
-      <div class="ghost-yt-container">
-        <div id="yt-army-player"></div>
-      </div>
     </div>
   </div>
 
@@ -1000,59 +981,26 @@
     if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 載入 YouTube API 並掛載《軍隊進行曲》
-  let ytPlayer = null;
-  const tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-
-  window.onYouTubeIframeAPIReady = function() {
-    ytPlayer = new YT.Player('yt-army-player', {
-      height: '10',
-      width: '10',
-      videoId: 'GcB-0GiR91M', // 你指定的軍隊進行曲
-      playerVars: {
-        autoplay: 0,
-        controls: 0,
-        disablekb: 1,
-        fs: 0,
-        playsinline: 1
-      },
-      events: {
-        onReady: (e) => e.target.setVolume(100)
-      }
-    });
+  // 🎵 雙重保險《軍隊進行曲》播放管線：
+  // 優先播放本地 theme/victory.mp3，若未上傳則播放經典軍隊進行曲公有領域雲端串流
+  const victoryAudio = new Audio('theme/victory.mp3');
+  victoryAudio.volume = 0.9;
+  victoryAudio.onerror = function() {
+    // 若倉庫尚未放置 theme/victory.mp3，自動切換至雲端古典進行曲音訊
+    victoryAudio.src = 'https://ia800301.us.archive.org/15/items/250-years-of-great-music/13%20Marche%20Militaire.mp3';
   };
 
-  // 雙保險音效播放器（若 YouTube 載入較慢時自動備援）
-  const backupAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
-  backupAudio.volume = 0.85;
-
   function playArmyMarch() {
-    if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-      try {
-        ytPlayer.seekTo(0);
-        ytPlayer.playVideo();
-        return;
-      } catch (e) {
-        console.warn("YouTube 播放失敗，切換備援音效：", e);
-      }
-    }
     try {
-      backupAudio.currentTime = 0;
-      backupAudio.play().catch(e => console.log(e));
+      victoryAudio.currentTime = 0;
+      victoryAudio.play().catch(e => console.log("音訊播放受瀏覽器政策攔截：", e));
     } catch (e) {}
   }
 
   function stopArmyMarch() {
-    if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
-      try {
-        ytPlayer.stopVideo();
-      } catch (e) {}
-    }
     try {
-      backupAudio.pause();
-      backupAudio.currentTime = 0;
+      victoryAudio.pause();
+      victoryAudio.currentTime = 0;
     } catch (e) {}
   }
 
@@ -1100,7 +1048,7 @@
     if (p3n) p3n.innerText = g3 ? g3.teams.join("、") : '-';
     if (p3s) p3s.innerText = g3 ? `${g3.score} 分` : '0 分';
 
-    // 先重置柱子為未揭曉狀態（利用 CSS transition 漸進升起）
+    // 先重置柱子為未揭曉狀態
     const p1 = document.querySelector('.rank-1');
     const p2 = document.querySelector('.rank-2');
     const p3 = document.querySelector('.rank-3');
@@ -1112,7 +1060,7 @@
     const modal = document.getElementById('podium-modal');
     if (modal) modal.style.display = 'flex';
 
-    // 播放軍隊進行曲
+    // 播放進行曲
     playArmyMarch();
 
     // 🌟 音樂先播 3 秒後揭曉季軍，各名次間隔 2.5 秒
