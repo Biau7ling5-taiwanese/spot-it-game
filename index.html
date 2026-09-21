@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Spot It!</title>
+<title>Spot It! 主題式課堂教具</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -124,10 +124,15 @@
     transition: transform 0.15s, background-color 0.2s;
   }
   .icon-btn:active { transform: scale(0.92); }
+
+  .btn-upload { background: rgba(46, 125, 50, 0.25); border-color: rgba(76, 175, 80, 0.45); color: #81c784; }
+  .btn-upload:hover { background: rgba(46, 125, 50, 0.45); }
   .btn-sync { background: rgba(0, 150, 136, 0.25); border-color: rgba(38, 166, 154, 0.45); color: #80cbc4; }
   .btn-sync:hover { background: rgba(0, 150, 136, 0.45); }
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
   .btn-view:hover { background: rgba(124, 77, 255, 0.42); }
+  .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
+  .btn-clear:hover { background: rgba(211, 47, 47, 0.42); }
 
   /* 頂部按鈕 Tooltip（向下彈出） */
   .icon-btn::after {
@@ -151,7 +156,7 @@
   }
   .icon-btn:hover::after { opacity: 1; bottom: -36px; }
 
-  /* 縮圖抽屜 */
+  /* 縮圖抽屜與刪除按鈕 */
   .thumb-drawer {
     display: none;
     flex-wrap: wrap;
@@ -173,7 +178,33 @@
     align-items: center;
     justify-content: center;
   }
-  .thumb-item img { max-width: 90%; max-height: 90%; object-fit: contain; }
+  .thumb-item img { max-width: 86%; max-height: 86%; object-fit: contain; }
+  
+  /* 刪除小按鈕 */
+  .thumb-del {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: #ef4444;
+    color: white;
+    border: 1.5px solid #181b36;
+    border-radius: 50%;
+    width: 17px;
+    height: 17px;
+    font-size: 11px;
+    line-height: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.15s, background-color 0.15s;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+  .thumb-del:hover {
+    background: #dc2626;
+    transform: scale(1.15);
+  }
 
   /* 計分板 */
   .scoreboard {
@@ -271,7 +302,7 @@
     white-space: nowrap;
   }
 
-  /* 右側操作面板與 Tooltip */
+  /* 右側操作面板 */
   .side-action-panel {
     display: flex;
     flex-direction: column;
@@ -306,33 +337,44 @@
   .btn-podium { background: rgba(255, 179, 0, 0.2); border-color: rgba(255, 213, 79, 0.45); }
   .btn-podium:hover { background: rgba(255, 179, 0, 0.35); }
 
-  /* 右側按鈕 Tooltip（向左彈出） */
+  /* 右側按鈕 Tooltip（向右展開） */
   .side-icon-btn::before {
     content: attr(data-tooltip);
     position: absolute;
-    right: calc(100% + 10px);
+    left: calc(100% + 12px);
+    right: auto;
     top: 50%;
     transform: translateY(-50%);
     background: rgba(10, 13, 28, 0.96);
     color: #ffd54f;
-    padding: 5px 10px;
-    border-radius: 6px;
-    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 7px;
+    font-size: 12.5px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
     border: 1px solid #ff9800;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.55);
     z-index: 100;
   }
-  .side-icon-btn:hover::before { opacity: 1; }
+  .side-icon-btn:hover::before {
+    opacity: 1;
+    transform: translateY(-50%) translateX(2px);
+  }
 
   @media (max-width: 820px) {
     .stage-wrapper { flex-direction: column; gap: 14px; }
     .side-action-panel { flex-direction: row; }
-    .side-icon-btn::before { right: auto; top: -36px; transform: translateX(-50%); left: 50%; }
+    .side-icon-btn::before {
+      left: 50%;
+      top: -38px;
+      transform: translateX(-50%);
+    }
+    .side-icon-btn:hover::before {
+      transform: translateX(-50%) translateY(-2px);
+    }
     .dobble-disk { width: min(44vw, 42vh, 320px); height: min(44vw, 42vh, 320px); }
   }
   @media (max-width: 480px) {
@@ -411,10 +453,14 @@
       <div class="round-pill" id="round-indicator">0 / 10</div>
       <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
 
-      <!-- 頂部按鈕組：已全面補齊 data-tooltip -->
+      <!-- 頂部按鈕：支援隨時手動增減與重整 -->
       <div class="right-icons">
-        <button class="icon-btn btn-sync" data-tooltip="🔄 重新整理與快取圖庫" onclick="fetchImagesFromGitHub()">🔄</button>
-        <button class="icon-btn btn-view" data-tooltip="👁️ 檢視/收闔31張圖庫" onclick="toggleThumbList()">👁️</button>
+        <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片（自動去白底）">➕</label>
+        <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
+
+        <button class="icon-btn btn-sync" data-tooltip="🔄 重新載入 GitHub 原生圖庫" onclick="fetchImagesFromGitHub()">🔄</button>
+        <button class="icon-btn btn-view" data-tooltip="👁️ 檢視與刪除個別縮圖" onclick="toggleThumbList()">👁️</button>
+        <button class="icon-btn btn-clear" data-tooltip="🗑️ 清空所有圖片（進入純字模式）" onclick="clearAllImages()">🗑️</button>
       </div>
     </div>
 
@@ -429,18 +475,17 @@
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」開始搶答</span></div>
     </div>
 
-    <!-- 右側操作面板：已全面補齊 data-tooltip -->
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" data-tooltip="🎲 下一題" onclick="drawNextPair()">🎲</button>
-      <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌" onclick="shuffleDeck()">🔀</button>
-      <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前頒獎" onclick="showPodium()">🏆</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌打亂" onclick="shuffleDeck()">🔀</button>
+      <button class="side-icon-btn btn-reset" data-tooltip="🔄 重置本局遊戲" onclick="resetGame()">🔄</button>
+      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前結算頒獎" onclick="showPodium()">🏆</button>
     </div>
   </div>
 
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
-      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:18px;">🎉 頒獎典禮 🎉</div>
+      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:18px;">🎉 優勝頒獎典禮 🎉</div>
       <div class="podium-stage">
         <div class="podium-pillar rank-2">
           <div class="pillar-team" id="p2-name">-</div>
@@ -463,39 +508,39 @@
   </div>
 
 <script>
-  // 🌟 31 張中秋圖定義（雙重特徵對齊：既有漢字也有拼音關鍵字，解決 lài-tah 與 sàn-bah 抓不到問題）
+  // 31 張中秋圖標準定義
   const itemDefinitions = [
-    { name: "打火機", key: "lài-tah", defaultFileName: "lài-tah.png" },
-    { name: "瘦肉", key: "sàn-bah", defaultFileName: "sàn-bah.png" },
-    { name: "三層肉", key: "三層肉", defaultFileName: "三層肉sam-tsân-bah.png" },
-    { name: "大同仔", key: "大同仔", defaultFileName: "大同仔tāi-tông-á.png" },
-    { name: "文旦", key: "文旦", defaultFileName: "文旦bûn-tàn.png" },
-    { name: "月娘", key: "月娘", defaultFileName: "月娘gue̍h-niû.png" },
-    { name: "月餅", key: "月餅", defaultFileName: "月餅gue̍h-piánn.png" },
-    { name: "牛排", key: "牛排", defaultFileName: "牛排gû-pâi.png" },
-    { name: "玉兔", key: "玉兔", defaultFileName: "玉兔挵藥仔gio̍k-thòo tsing-io̍k-á.png" },
-    { name: "米血", key: "米血", defaultFileName: "米血bí-hueh.png" },
-    { name: "卵仁酥", key: "卵仁酥", defaultFileName: "卵仁酥nñg-jîn-soo.png" },
-    { name: "金針菇", key: "金針菇", defaultFileName: "金針菇kim-tsiam-koo.png" },
-    { name: "俗麭", key: "俗麭", defaultFileName: "俗麭sio̍k-pháng.png" },
-    { name: "香菇", key: "香菇", defaultFileName: "香菇hiunn-koo.png" },
-    { name: "烘爐", key: "烘爐", defaultFileName: "烘爐hang-lôo.png" },
-    { name: "茭白筍", key: "茭白筍", defaultFileName: "茭白筍kha-pe̍h-sún.png" },
-    { name: "蚵仔", key: "蚵仔", defaultFileName: "蚵仔ô-á.png" },
-    { name: "蚶仔", key: "蚶仔", defaultFileName: "蚶仔ham-á.png" },
-    { name: "透抽", key: "透抽", defaultFileName: "透抽thàu-thiu.png" },
-    { name: "棉仔糖", key: "棉仔糖", defaultFileName: "棉仔糖mî-á thn̂g.png" },
-    { name: "番仔火", key: "番仔火", defaultFileName: "番仔火huan-á-hué.png" },
-    { name: "番麥", key: "番麥", defaultFileName: "番麥huan-be̍h.png" },
-    { name: "番薯", key: "番薯", defaultFileName: "番薯han-tsî.png" },
-    { name: "黑輪", key: "黑輪", defaultFileName: "黑輪oo-lián.png" },
-    { name: "煙火", key: "煙火", defaultFileName: "煙火ian-hué.png" },
-    { name: "煙腸", key: "煙腸", defaultFileName: "煙腸ian-tshiâng.png" },
-    { name: "嫦娥", key: "嫦娥", defaultFileName: "嫦娥Siông-ngôo.png" },
-    { name: "綠豆膨", key: "綠豆膨", defaultFileName: "綠豆膨li̍k-tāu-phòng.png" },
-    { name: "蝦仔", key: "蝦仔", defaultFileName: "蝦仔hê-á.png" },
-    { name: "蟳仔", key: "蟳仔", defaultFileName: "蟳仔tsîm-á.png" },
-    { name: "火炭", key: "火炭", defaultFileName: "火炭hué-thuànn.png" }
+    { name: "打火機", keys: ["lài-tah", "lai-tah"], defaultFileName: "lài-tah.png" },
+    { name: "瘦肉", keys: ["sàn-bah", "san-bah"], defaultFileName: "sàn-bah.png" },
+    { name: "三層肉", keys: ["三層肉", "sam-tsân"], defaultFileName: "三層肉sam-tsân-bah.png" },
+    { name: "大同仔", keys: ["大同仔", "tāi-tông"], defaultFileName: "大同仔tāi-tông-á.png" },
+    { name: "文旦", keys: ["文旦", "bûn-tàn"], defaultFileName: "文旦bûn-tàn.png" },
+    { name: "月娘", keys: ["月娘", "gue̍h-niû"], defaultFileName: "月娘gue̍h-niû.png" },
+    { name: "月餅", keys: ["月餅", "gue̍h-piánn"], defaultFileName: "月餅gue̍h-piánn.png" },
+    { name: "牛排", keys: ["牛排", "gû-pâi"], defaultFileName: "牛排gû-pâi.png" },
+    { name: "玉兔", keys: ["玉兔", "gio̍k-thòo"], defaultFileName: "玉兔挵藥仔gio̍k-thòo tsing-io̍k-á.png" },
+    { name: "米血", keys: ["米血", "bí-hueh"], defaultFileName: "米血bí-hueh.png" },
+    { name: "卵仁酥", keys: ["卵仁酥", "nñg-jîn"], defaultFileName: "卵仁酥nñg-jîn-soo.png" },
+    { name: "金針菇", keys: ["金針菇", "kim-tsiam"], defaultFileName: "金針菇kim-tsiam-koo.png" },
+    { name: "俗麭", keys: ["俗麭", "sio̍k-pháng"], defaultFileName: "俗麭sio̍k-pháng.png" },
+    { name: "香菇", keys: ["香菇", "hiunn-koo"], defaultFileName: "香菇hiunn-koo.png" },
+    { name: "烘爐", keys: ["烘爐", "hang-lôo"], defaultFileName: "烘爐hang-lôo.png" },
+    { name: "茭白筍", keys: ["茭白筍", "茭", "kha-pe̍h-sún"], defaultFileName: "茭白筍kha-pe̍h-sún.png" },
+    { name: "蚵仔", keys: ["蚵仔", "ô-á"], defaultFileName: "蚵仔ô-á.png" },
+    { name: "蚶仔", keys: ["蚶仔", "蚶", "ham-á"], defaultFileName: "蚶仔ham-á.png" },
+    { name: "透抽", keys: ["透抽", "thàu-thiu"], defaultFileName: "透抽thàu-thiu.png" },
+    { name: "棉仔糖", keys: ["棉仔糖", "mî-á"], defaultFileName: "棉仔糖mî-á thn̂g.png" },
+    { name: "番仔火", keys: ["番仔火", "huan-á-hué"], defaultFileName: "番仔火huan-á-hué.png" },
+    { name: "番麥", keys: ["番麥", "huan-be̍h"], defaultFileName: "番麥huan-be̍h.png" },
+    { name: "番薯", keys: ["番薯", "han-tsî"], defaultFileName: "番薯han-tsî.png" },
+    { name: "黑輪", keys: ["黑輪", "oo-lián"], defaultFileName: "黑輪oo-lián.png" },
+    { name: "煙火", keys: ["煙火", "ian-hué"], defaultFileName: "煙火ian-hué.png" },
+    { name: "煙腸", keys: ["煙腸", "ian-tshiâng"], defaultFileName: "煙腸ian-tshiâng.png" },
+    { name: "嫦娥", keys: ["嫦娥", "Siông-ngôo"], defaultFileName: "嫦娥Siông-ngôo.png" },
+    { name: "綠豆膨", keys: ["綠豆膨", "綠豆", "膨", "li̍k-tāu-phòng"], defaultFileName: "綠豆膨li̍k-tāu-phòng.png" },
+    { name: "蝦仔", keys: ["蝦仔", "hê-á"], defaultFileName: "蝦仔hê-á.png" },
+    { name: "蟳仔", keys: ["蟳仔", "tsîm-á"], defaultFileName: "蟳仔tsîm-á.png" },
+    { name: "火炭", keys: ["火炭", "hué-thuànn"], defaultFileName: "火炭hué-thuànn.png" }
   ];
 
   let imageList = [];
@@ -504,41 +549,66 @@
   let teamScores = [];
   let currentCards = [null, null];
 
-  // 記憶體快取池
+  // 記憶體快取
   const preloadedImageCache = {};
 
-  // 背景預載（保證抽題 0 秒延遲）
+  // 🌟 Canvas 自動去除白色背景（即時轉透明 PNG）
+  function removeWhiteBackground(sourceImgOrUrl, callback) {
+    const img = new Image();
+    img.crossOrigin = "anonymous";
+    img.onload = function() {
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+
+      try {
+        const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        const data = imgData.data;
+
+        // 去除白色與近白底色（RGB > 238）
+        for (let i = 0; i < data.length; i += 4) {
+          if (data[i] > 238 && data[i + 1] > 238 && data[i + 2] > 238) {
+            data[i + 3] = 0;
+          }
+        }
+        ctx.putImageData(imgData, 0, 0);
+        callback(canvas.toDataURL('image/png'));
+      } catch (err) {
+        callback(img.src);
+      }
+    };
+    img.onerror = function() {
+      callback(typeof sourceImgOrUrl === 'string' ? sourceImgOrUrl : '');
+    };
+    img.src = typeof sourceImgOrUrl === 'string' ? sourceImgOrUrl : sourceImgOrUrl.src;
+  }
+
+  // 預載並去背所有圖片
   function preloadAllAssets(items) {
     const statusTag = document.getElementById('gallery-status');
     let loadedCount = 0;
     const total = items.length;
 
+    if (total === 0) {
+      statusTag.innerText = `已備 0 張圖`;
+      return;
+    }
+
     items.forEach(item => {
-      const img = new Image();
-      img.onload = () => {
+      removeWhiteBackground(item.src, (cleanedDataUrl) => {
         loadedCount++;
-        preloadedImageCache[item.name] = img.src;
-        statusTag.innerText = `⚡ 快取中 (${loadedCount}/${total})`;
+        preloadedImageCache[item.name] = cleanedDataUrl;
+        statusTag.innerText = `⚡ 快取去背中 (${loadedCount}/${total})`;
         if (loadedCount === total) {
-          statusTag.innerText = `🚀 已就緒 (秒開模式)`;
+          statusTag.innerText = `🚀 ${total}張圖全數就緒！`;
         }
-      };
-      img.onerror = () => {
-        // 若主路徑失敗，嘗試備案路徑
-        if (item.fallbackLocal && img.src !== item.fallbackLocal) {
-          img.src = item.fallbackLocal;
-        } else {
-          loadedCount++;
-          if (loadedCount === total) {
-            statusTag.innerText = `🚀 已就緒 (秒開模式)`;
-          }
-        }
-      };
-      img.src = item.src;
+      });
     });
   }
 
-  // 🌟 核心：Unicode NFC 標準化比對 + GitHub 自動感應配對
+  // 自 GitHub 讀取目錄
   async function fetchImagesFromGitHub() {
     const statusTag = document.getElementById('gallery-status');
     statusTag.innerText = "⚡ 正在連線圖庫...";
@@ -559,16 +629,21 @@
     }
 
     if (Array.isArray(files) && files.length > 0) {
-      // 將線上檔名全部進行 Unicode NFC 標準化，避免調符分解導致比對失敗
       const normalizedFiles = files.map(f => ({
         originalName: f.name,
-        normName: f.name.normalize('NFC')
+        nfc: f.name.normalize('NFC'),
+        nfd: f.name.normalize('NFD')
       }));
 
       imageList = itemDefinitions.map((def, idx) => {
-        const normKey = def.key.normalize('NFC');
-        // 模糊匹配：檔名包含 key（支援漢字或拼音開頭）
-        const matched = normalizedFiles.find(f => f.normName.includes(normKey));
+        const matched = normalizedFiles.find(f => {
+          return def.keys.some(k => {
+            const knfc = k.normalize('NFC');
+            const knfd = k.normalize('NFD');
+            return f.nfc.includes(knfc) || f.nfd.includes(knfd);
+          });
+        });
+
         const finalFileName = matched ? matched.originalName : def.defaultFileName;
 
         return {
@@ -579,7 +654,6 @@
         };
       });
     } else {
-      // 靜態備用解析
       imageList = itemDefinitions.map((def, idx) => ({
         id: `sym_${idx}`,
         name: def.name,
@@ -593,18 +667,75 @@
     resetGame();
   }
 
+  // 🌟 使用者手動上傳新圖片（自動去除白底並加入）
+  document.getElementById('img-input').addEventListener('change', function(e) {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
+
+    let processed = 0;
+    files.forEach(file => {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        removeWhiteBackground(evt.target.result, (cleanedUrl) => {
+          const cleanName = file.name.replace(/\.[^/.]+$/, "");
+          const newItem = {
+            id: Date.now() + Math.random(),
+            src: cleanedUrl,
+            name: cleanName
+          };
+          imageList.push(newItem);
+          preloadedImageCache[cleanName] = cleanedUrl;
+          processed++;
+
+          if (processed === files.length) {
+            renderThumbnails();
+            resetGame();
+            document.getElementById('thumb-container').style.display = 'flex';
+          }
+        });
+      };
+      reader.readAsDataURL(file);
+    });
+    this.value = '';
+  });
+
+  // 🌟 縮圖抽屜：包含右上角紅色刪除按鈕
   function renderThumbnails() {
     const container = document.getElementById('thumb-container');
     container.innerHTML = '';
-    imageList.forEach((item) => {
+    imageList.forEach((item, idx) => {
       const div = document.createElement('div');
       div.className = 'thumb-item';
       div.title = item.name;
+      const displaySrc = preloadedImageCache[item.name] || item.src;
       div.innerHTML = `
-        <img src="${item.src}" alt="${item.name}" onerror="if(this.dataset.tried!=='1'){this.dataset.tried='1'; this.src='${item.fallbackLocal}';}">
+        <img src="${displaySrc}" alt="${item.name}">
+        <button class="thumb-del" onclick="removeSingleImage(${idx})" title="刪除此圖片">×</button>
       `;
       container.appendChild(div);
     });
+
+    const n = parseInt(document.getElementById('mode-select').value);
+    const required = n * n + n + 1;
+    document.getElementById('gallery-status').innerText = `已備 ${imageList.length} / ${required} 張圖`;
+  }
+
+  // 🌟 點擊 × 單張刪除功能
+  function removeSingleImage(index) {
+    const removed = imageList.splice(index, 1)[0];
+    if (removed) delete preloadedImageCache[removed.name];
+    renderThumbnails();
+    resetGame();
+  }
+
+  // 清空圖片（退回純字卡模式）
+  function clearAllImages() {
+    if (confirm("確定要清空目前圖片嗎？（將切換為純文字卡模式，點擊 🔄 可隨時復原圖庫）")) {
+      imageList = [];
+      Object.keys(preloadedImageCache).forEach(key => delete preloadedImageCache[key]);
+      renderThumbnails();
+      resetGame();
+    }
   }
 
   function toggleThumbList() {
@@ -613,6 +744,7 @@
     container.style.display = isHidden ? 'flex' : 'none';
   }
 
+  // 嗒寶數學矩陣 (射影平面)
   function buildProjectivePlane(n) {
     const cards = [];
     const c1 = [];
@@ -648,10 +780,11 @@
 
   function shuffleDeck() {
     deck.sort(() => Math.random() - 0.5);
-    alert("牌堆已重新洗牌！");
+    alert("牌堆已手動洗牌打亂！");
   }
 
   function onModeChange() {
+    renderThumbnails();
     resetGame();
   }
 
@@ -769,6 +902,7 @@
     }
   }
 
+  // 計分板
   function renderScoreboard() {
     const count = parseInt(document.getElementById('team-count').value) || 1;
     const board = document.getElementById('scoreboard');
