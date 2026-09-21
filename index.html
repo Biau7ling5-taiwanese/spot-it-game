@@ -18,7 +18,7 @@
     overflow-x: hidden;
   }
 
-  /* 標題 */
+  /* 遊戲化標題 */
   .header-banner {
     display: flex;
     align-items: center;
@@ -48,7 +48,7 @@
     50% { transform: rotate(12deg) scale(1.08); }
   }
 
-  /* 控制列 */
+  /* 頂部一體化控制列 */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
@@ -102,7 +102,7 @@
     transition: all 0.3s ease;
   }
 
-  /* 頂部圖示按鈕組與 Tooltip */
+  /* 頂部圖示按鈕組與 Tooltip（向上彈出） */
   .right-icons {
     display: flex;
     align-items: center;
@@ -125,6 +125,10 @@
   }
   .icon-btn:active { transform: scale(0.92); }
 
+  .btn-scoreboard-toggle { background: rgba(255, 152, 0, 0.22); border-color: rgba(255, 152, 0, 0.45); color: #ffb74d; }
+  .btn-scoreboard-toggle.active { background: rgba(255, 152, 0, 0.55); border-color: #ff9800; }
+  .btn-scoreboard-toggle:hover { background: rgba(255, 152, 0, 0.38); }
+
   .btn-upload { background: rgba(46, 125, 50, 0.25); border-color: rgba(76, 175, 80, 0.45); color: #81c784; }
   .btn-upload:hover { background: rgba(46, 125, 50, 0.45); }
   .btn-sync { background: rgba(0, 150, 136, 0.25); border-color: rgba(38, 166, 154, 0.45); color: #80cbc4; }
@@ -134,7 +138,7 @@
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
   .btn-clear:hover { background: rgba(211, 47, 47, 0.42); }
 
-  /* 頂部按鈕 Tooltip（向上彈出） */
+  /* 頂部按鈕說明文字：一律向上彈出避開滑鼠 */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -162,7 +166,7 @@
     transform: translateX(-50%) !important;
   }
 
-  /* 縮圖抽屜與刪除按鈕 */
+  /* 縮圖抽屜與刪除鍵 */
   .thumb-drawer {
     display: none;
     flex-wrap: wrap;
@@ -190,7 +194,6 @@
     object-fit: contain;
     mix-blend-mode: multiply;
   }
-  
   .thumb-del {
     position: absolute;
     top: -4px;
@@ -216,16 +219,31 @@
     transform: scale(1.15);
   }
 
-  /* 計分板 */
+  /* 計分板面板（預設收闔） */
+  .scoreboard-panel-wrap {
+    display: none;
+    width: 96%;
+    max-width: 1260px;
+    background: #141730;
+    border: 1px solid #282d54;
+    border-radius: 10px;
+    padding: 10px 14px;
+    margin-bottom: clamp(8px, 1.5vw, 14px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  }
+  .scoreboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 8px;
+    margin-bottom: 8px;
+    border-bottom: 1px dashed #282d54;
+  }
   .scoreboard {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
     justify-content: center;
-    width: 96%;
-    max-width: 1260px;
-    margin-bottom: clamp(8px, 1.5vw, 14px);
-    min-height: 50px;
   }
   .team-card {
     background: #181b33;
@@ -301,7 +319,6 @@
     object-fit: contain;
     mix-blend-mode: multiply !important;
   }
-
   .symbol-fallback {
     font-size: clamp(11px, 1.3vw, 15px);
     font-weight: bold;
@@ -344,12 +361,16 @@
   .side-icon-btn:active { transform: scale(0.92); }
   .btn-draw { background: rgba(33, 150, 243, 0.2); border-color: rgba(100, 181, 246, 0.45); }
   .btn-draw:hover { background: rgba(33, 150, 243, 0.35); }
-  .btn-shuffle { background: rgba(156, 39, 176, 0.2); border-color: rgba(186, 104, 200, 0.45); }
-  .btn-shuffle:hover { background: rgba(156, 39, 176, 0.35); }
   .btn-reset { background: rgba(244, 67, 54, 0.2); border-color: rgba(229, 115, 115, 0.45); }
   .btn-reset:hover { background: rgba(244, 67, 54, 0.35); }
   .btn-podium { background: rgba(255, 179, 0, 0.2); border-color: rgba(255, 213, 79, 0.45); }
   .btn-podium:hover { background: rgba(255, 179, 0, 0.35); }
+  .btn-podium.playing { animation: pulseGlow 1.2s infinite; border-color: #ffd54f; }
+
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 10px rgba(255, 179, 0, 0.4); transform: scale(1); }
+    50% { box-shadow: 0 0 20px rgba(255, 179, 0, 0.9); transform: scale(1.06); }
+  }
 
   /* 右側按鈕 Tooltip 永遠向右彈出 */
   .side-icon-btn::before {
@@ -396,78 +417,6 @@
     .arena { flex-direction: column; }
     .dobble-disk { width: min(72vw, 36vh, 260px); height: min(72vw, 36vh, 260px); }
   }
-
-  /* 頒獎台 Modal */
-  .podium-modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(7, 9, 20, 0.94);
-    backdrop-filter: blur(10px);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
-  }
-  .podium-box {
-    background: linear-gradient(180deg, #1f2547 0%, #13172e 100%);
-    border: 2px solid #ffb300;
-    border-radius: 20px;
-    width: 92%;
-    max-width: 600px;
-    padding: 28px 18px;
-    text-align: center;
-    box-shadow: 0 0 40px rgba(255, 179, 0, 0.35);
-  }
-  .podium-stage {
-    display: flex;
-    align-items: flex-end;
-    justify-content: center;
-    gap: clamp(10px, 2.5vw, 18px);
-    height: 220px;
-    margin-bottom: 24px;
-  }
-
-  /* 階梯式揭榜動畫 */
-  .podium-pillar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-end;
-    width: clamp(90px, 26vw, 140px);
-    opacity: 0;
-    transform: translateY(60px);
-    transition: opacity 0.65s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.65s cubic-bezier(0.34, 1.56, 0.64, 1);
-  }
-  .podium-pillar.revealed {
-    opacity: 1 !important;
-    transform: translateY(0) !important;
-  }
-
-  .pillar-team {
-    font-size: clamp(13px, 1.6vw, 16px);
-    font-weight: 900;
-    color: #ffffff;
-    margin-bottom: 5px;
-    line-height: 1.3;
-    word-break: break-word;
-    max-width: 100%;
-  }
-  .pillar-score { font-size: 13.5px; font-weight: bold; color: #69f0ae; margin-bottom: 7px; }
-  .pillar-block {
-    width: 100%;
-    border-radius: 10px 10px 0 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: clamp(17px, 2.2vw, 22px);
-    font-weight: 900;
-    letter-spacing: 1px;
-    box-shadow: 0 -4px 18px rgba(0,0,0,0.4);
-  }
-  
-  .rank-1 .pillar-block { height: 130px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); color: #3e2723; }
-  .rank-2 .pillar-block { height: 95px; background: linear-gradient(180deg, #cfd8dc 0%, #78909c 100%); color: #263238; }
-  .rank-3 .pillar-block { height: 68px; background: linear-gradient(180deg, #d7ccc8 0%, #8d6e63 100%); color: #3e2723; }
 </style>
 </head>
 <body>
@@ -498,20 +447,19 @@
         </select>
       </div>
 
-      <div class="param-item">
-        <span class="param-label">組數</span>
-        <input type="number" id="team-count" min="1" max="12" value="6" onchange="renderScoreboard()">
-      </div>
-
+      <!-- 預設 20 回合 -->
       <div class="param-item">
         <span class="param-label">總回合</span>
-        <input type="number" id="total-rounds" min="1" max="50" value="10" onchange="updateRoundBadge()">
+        <input type="number" id="total-rounds" min="1" max="50" value="20" onchange="updateRoundBadge()">
       </div>
 
-      <div class="round-pill" id="round-indicator">0 / 10</div>
+      <div class="round-pill" id="round-indicator">0 / 20</div>
       <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
 
       <div class="right-icons">
+        <!-- 計分板開關鈕 -->
+        <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
+
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳新圖片">➕</label>
         <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
 
@@ -524,7 +472,17 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <div class="scoreboard" id="scoreboard"></div>
+  <!-- 計分板面板（預設收合） -->
+  <div class="scoreboard-panel-wrap" id="scoreboard-panel">
+    <div class="scoreboard-header">
+      <div class="param-item">
+        <span class="param-label" style="color:#ffb74d;">組數設定</span>
+        <input type="number" id="team-count" min="1" max="12" value="6" onchange="renderScoreboard()">
+      </div>
+      <button style="background:transparent; border:none; color:#9fa8da; font-size:12px; cursor:pointer;" onclick="toggleScoreboardPanel()">✕ 隱藏收合</button>
+    </div>
+    <div class="scoreboard" id="scoreboard"></div>
+  </div>
 
   <div class="stage-wrapper">
     <div class="arena">
@@ -532,41 +490,11 @@
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
+    <!-- 右側面板：已移除手動洗牌，保留抽題、重置、播放頒獎樂 -->
     <div class="side-action-panel">
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
-      <button class="side-icon-btn btn-shuffle" data-tooltip="🔀 手動洗牌" onclick="shuffleDeck()">🔀</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" data-tooltip="🏆 提前頒獎" onclick="showPodium()">🏆</button>
-    </div>
-  </div>
-
-  <!-- 頒獎台彈窗 -->
-  <div class="podium-modal" id="podium-modal">
-    <div class="podium-box">
-      <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:20px; text-shadow:0 0 12px rgba(255,213,79,0.5);">🎉 優勝頒獎典禮 🎉</div>
-      
-      <div class="podium-stage">
-        <!-- 亞軍柱 -->
-        <div class="podium-pillar rank-2">
-          <div class="pillar-team" id="p2-name">-</div>
-          <div class="pillar-score" id="p2-score">0 分</div>
-          <div class="pillar-block">🥈 亞軍</div>
-        </div>
-        <!-- 冠軍柱 -->
-        <div class="podium-pillar rank-1">
-          <div class="pillar-team" id="p1-name">-</div>
-          <div class="pillar-score" id="p1-score">0 分</div>
-          <div class="pillar-block">👑 冠軍</div>
-        </div>
-        <!-- 季軍柱 -->
-        <div class="podium-pillar rank-3">
-          <div class="pillar-team" id="p3-name">-</div>
-          <div class="pillar-score" id="p3-score">0 分</div>
-          <div class="pillar-block">🥉 季軍</div>
-        </div>
-      </div>
-
-      <button style="padding:10px 24px; border-radius:8px; background:linear-gradient(180deg, #0070f3 0%, #0051b3 100%); color:#fff; border:none; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(0,112,243,0.4);" onclick="closePodium()">關閉結算</button>
+      <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 播放頒獎樂" onclick="toggleVictoryMusic()">🏆</button>
     </div>
   </div>
 
@@ -784,6 +712,16 @@
     container.style.display = isHidden ? 'flex' : 'none';
   }
 
+  // 切換計分板開關
+  function toggleScoreboardPanel() {
+    const panel = document.getElementById('scoreboard-panel');
+    const btn = document.getElementById('btn-toggle-score');
+    if (!panel) return;
+    const isHidden = window.getComputedStyle(panel).display === 'none';
+    panel.style.display = isHidden ? 'block' : 'none';
+    if (btn) btn.classList.toggle('active', isHidden);
+  }
+
   function buildProjectivePlane(n) {
     const cards = [];
     const c1 = [];
@@ -818,11 +756,7 @@
     const dr = document.getElementById('disk-right');
     if (dl) dl.innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
     if (dr) dr.innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
-  }
-
-  function shuffleDeck() {
-    deck.sort(() => Math.random() - 0.5);
-    alert("牌堆已手動洗牌打亂！");
+    stopVictoryMusic();
   }
 
   function onModeChange() {
@@ -836,7 +770,7 @@
 
   function updateRoundBadge() {
     const totalInput = document.getElementById('total-rounds');
-    const total = totalInput ? (parseInt(totalInput.value) || 10) : 10;
+    const total = totalInput ? (parseInt(totalInput.value) || 20) : 20;
     const badge = document.getElementById('round-indicator');
     if (badge) badge.innerText = `${currentRound} / ${total}`;
   }
@@ -926,9 +860,9 @@
 
   function drawNextPair() {
     const totalInput = document.getElementById('total-rounds');
-    const totalRounds = totalInput ? (parseInt(totalInput.value) || 10) : 10;
+    const totalRounds = totalInput ? (parseInt(totalInput.value) || 20) : 20;
     if (currentRound >= totalRounds) {
-      showPodium();
+      playVictoryMusic();
       return;
     }
     if (deck.length < 2) {
@@ -945,7 +879,7 @@
     updateRoundBadge();
 
     if (currentRound === totalRounds) {
-      setTimeout(showPodium, 800);
+      setTimeout(playVictoryMusic, 800);
     }
   }
 
@@ -981,108 +915,49 @@
     if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 雙重保險《軍隊進行曲》播放管線：
-  // 優先播放本地 theme/victory.mp3，若未上傳則播放經典軍隊進行曲公有領域雲端串流
+  // 🎵 專屬頒獎音樂：讀取 theme/victory.mp3，並具備古典軍隊進行曲雲端備援
   const victoryAudio = new Audio('theme/victory.mp3');
-  victoryAudio.volume = 0.9;
+  victoryAudio.volume = 0.95;
   victoryAudio.onerror = function() {
-    // 若倉庫尚未放置 theme/victory.mp3，自動切換至雲端古典進行曲音訊
     victoryAudio.src = 'https://ia800301.us.archive.org/15/items/250-years-of-great-music/13%20Marche%20Militaire.mp3';
   };
 
-  function playArmyMarch() {
+  let isMusicPlaying = false;
+  function playVictoryMusic() {
     try {
       victoryAudio.currentTime = 0;
-      victoryAudio.play().catch(e => console.log("音訊播放受瀏覽器政策攔截：", e));
+      victoryAudio.play().then(() => {
+        isMusicPlaying = true;
+        const btn = document.getElementById('btn-podium-music');
+        if (btn) btn.classList.add('playing');
+      }).catch(e => console.log("播放授權等待：", e));
     } catch (e) {}
   }
 
-  function stopArmyMarch() {
+  function stopVictoryMusic() {
     try {
       victoryAudio.pause();
       victoryAudio.currentTime = 0;
+      isMusicPlaying = false;
+      const btn = document.getElementById('btn-podium-music');
+      if (btn) btn.classList.remove('playing');
     } catch (e) {}
   }
 
-  let podiumTimers = [];
-  function clearPodiumTimers() {
-    podiumTimers.forEach(t => clearTimeout(t));
-    podiumTimers = [];
+  // 🏆 點選頒獎按鈕：直接播放／暫停切換
+  function toggleVictoryMusic() {
+    if (isMusicPlaying) {
+      stopVictoryMusic();
+    } else {
+      playVictoryMusic();
+    }
   }
 
-  // 🏆 頒獎：同分並列 + 音樂先播3秒 + 間隔2.5秒逐一揭榜
-  function showPodium() {
-    clearPodiumTimers();
-
-    const list = teamScores.map((score, idx) => ({ name: `第 ${idx + 1} 組`, score }));
-    list.sort((a, b) => b.score - a.score);
-
-    // 同分自動並列歸類
-    const scoreGroups = [];
-    list.forEach(item => {
-      const existing = scoreGroups.find(g => g.score === item.score);
-      if (existing) {
-        existing.teams.push(item.name);
-      } else {
-        scoreGroups.push({ score: item.score, teams: [item.name] });
-      }
-    });
-
-    const g1 = scoreGroups[0];
-    const g2 = scoreGroups[1];
-    const g3 = scoreGroups[2];
-
-    const p1n = document.getElementById('p1-name');
-    const p1s = document.getElementById('p1-score');
-    const p2n = document.getElementById('p2-name');
-    const p2s = document.getElementById('p2-score');
-    const p3n = document.getElementById('p3-name');
-    const p3s = document.getElementById('p3-score');
-
-    if (p1n) p1n.innerText = g1 ? g1.teams.join("、") : '-';
-    if (p1s) p1s.innerText = g1 ? `${g1.score} 分` : '0 分';
-
-    if (p2n) p2n.innerText = g2 ? g2.teams.join("、") : '-';
-    if (p2s) p2s.innerText = g2 ? `${g2.score} 分` : '0 分';
-
-    if (p3n) p3n.innerText = g3 ? g3.teams.join("、") : '-';
-    if (p3s) p3s.innerText = g3 ? `${g3.score} 分` : '0 分';
-
-    // 先重置柱子為未揭曉狀態
-    const p1 = document.querySelector('.rank-1');
-    const p2 = document.querySelector('.rank-2');
-    const p3 = document.querySelector('.rank-3');
-    
-    [p1, p2, p3].forEach(p => {
-      if (p) p.classList.remove('revealed');
-    });
-
-    const modal = document.getElementById('podium-modal');
-    if (modal) modal.style.display = 'flex';
-
-    // 播放進行曲
-    playArmyMarch();
-
-    // 🌟 音樂先播 3 秒後揭曉季軍，各名次間隔 2.5 秒
-    podiumTimers.push(setTimeout(() => {
-      if (p3) p3.classList.add('revealed');
-    }, 3000)); // 3.0 秒：揭曉【🥉 季軍】
-
-    podiumTimers.push(setTimeout(() => {
-      if (p2) p2.classList.add('revealed');
-    }, 5500)); // 5.5 秒：揭曉【🥈 亞軍】
-
-    podiumTimers.push(setTimeout(() => {
-      if (p1) p1.classList.add('revealed');
-    }, 8000)); // 8.0 秒：揭曉【👑 冠軍】！
-  }
-
-  function closePodium() {
-    clearPodiumTimers();
-    const modal = document.getElementById('podium-modal');
-    if (modal) modal.style.display = 'none';
-    stopArmyMarch();
-  }
+  victoryAudio.onended = function() {
+    isMusicPlaying = false;
+    const btn = document.getElementById('btn-podium-music');
+    if (btn) btn.classList.remove('playing');
+  };
 
   window.addEventListener('keydown', (e) => {
     if (e.code === 'Space' && e.target.tagName !== 'INPUT') {
