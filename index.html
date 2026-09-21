@@ -191,6 +191,7 @@
     mix-blend-mode: multiply;
   }
   
+  /* 刪除小按鈕 (紅色 ×) */
   .thumb-del {
     position: absolute;
     top: -4px;
@@ -402,7 +403,7 @@
   .podium-modal {
     position: fixed;
     inset: 0;
-    background: rgba(7, 9, 20, 0.92);
+    background: rgba(7, 9, 20, 0.94);
     backdrop-filter: blur(10px);
     display: none;
     align-items: center;
@@ -414,7 +415,7 @@
     border: 2px solid #ffb300;
     border-radius: 20px;
     width: 92%;
-    max-width: 580px;
+    max-width: 600px;
     padding: 28px 18px;
     text-align: center;
     box-shadow: 0 0 40px rgba(255, 179, 0, 0.35);
@@ -424,26 +425,24 @@
     align-items: flex-end;
     justify-content: center;
     gap: clamp(10px, 2.5vw, 18px);
-    height: 200px;
+    height: 220px;
     margin-bottom: 24px;
   }
 
-  /* 🌟 核心：100% 必定觸發的階梯式揭榜動畫 */
+  /* 階梯式揭榜動畫 */
   .podium-pillar {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-end;
-    width: clamp(80px, 22vw, 115px);
-    visibility: hidden; /* 初始完全隱形 */
+    width: clamp(90px, 26vw, 140px);
+    visibility: hidden;
     opacity: 0;
   }
-
-  /* 當加入 .revealed 時執行震撼升起動畫 */
   .podium-pillar.revealed {
     visibility: visible;
     opacity: 1;
-    animation: riseUp 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    animation: riseUp 0.75s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
   }
 
   @keyframes riseUp {
@@ -460,7 +459,15 @@
     }
   }
 
-  .pillar-team { font-size: 15px; font-weight: 900; color: #ffffff; margin-bottom: 5px; }
+  .pillar-team {
+    font-size: clamp(13px, 1.6vw, 16px);
+    font-weight: 900;
+    color: #ffffff;
+    margin-bottom: 5px;
+    line-height: 1.3;
+    word-break: break-word;
+    max-width: 100%;
+  }
   .pillar-score { font-size: 13.5px; font-weight: bold; color: #69f0ae; margin-bottom: 7px; }
   .pillar-block {
     width: 100%;
@@ -468,10 +475,13 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 26px;
+    font-size: clamp(17px, 2.2vw, 22px);
     font-weight: 900;
+    letter-spacing: 1px;
     box-shadow: 0 -4px 18px rgba(0,0,0,0.4);
   }
+  
+  /* 名次色塊設定（改為冠軍、亞軍、季軍） */
   .rank-1 .pillar-block { height: 130px; background: linear-gradient(180deg, #ffd700 0%, #b8860b 100%); color: #3e2723; }
   .rank-2 .pillar-block { height: 95px; background: linear-gradient(180deg, #cfd8dc 0%, #78909c 100%); color: #263238; }
   .rank-3 .pillar-block { height: 68px; background: linear-gradient(180deg, #d7ccc8 0%, #8d6e63 100%); color: #3e2723; }
@@ -547,25 +557,28 @@
     </div>
   </div>
 
-  <!-- 頒獎台彈窗 -->
+  <!-- 頒獎台彈窗：柱子文字改為 冠軍、亞軍、季軍 -->
   <div class="podium-modal" id="podium-modal">
     <div class="podium-box">
       <div style="font-size:26px; font-weight:900; color:#ffd54f; margin-bottom:20px; text-shadow:0 0 12px rgba(255,213,79,0.5);">🎉 優勝頒獎典禮 🎉</div>
       <div class="podium-stage">
+        <!-- 亞軍柱 -->
         <div class="podium-pillar rank-2">
           <div class="pillar-team" id="p2-name">-</div>
           <div class="pillar-score" id="p2-score">0 分</div>
-          <div class="pillar-block">2</div>
+          <div class="pillar-block">🥈 亞軍</div>
         </div>
+        <!-- 冠軍柱 -->
         <div class="podium-pillar rank-1">
           <div class="pillar-team" id="p1-name">-</div>
           <div class="pillar-score" id="p1-score">0 分</div>
-          <div class="pillar-block">👑 1</div>
+          <div class="pillar-block">👑 冠軍</div>
         </div>
+        <!-- 季軍柱 -->
         <div class="podium-pillar rank-3">
           <div class="pillar-team" id="p3-name">-</div>
           <div class="pillar-score" id="p3-score">0 分</div>
-          <div class="pillar-block">3</div>
+          <div class="pillar-block">🥉 季軍</div>
         </div>
       </div>
       <button style="padding:10px 24px; border-radius:8px; background:linear-gradient(180deg, #0070f3 0%, #0051b3 100%); color:#fff; border:none; font-weight:bold; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(0,112,243,0.4);" onclick="closePodium()">關閉結算</button>
@@ -807,8 +820,8 @@
     currentRound = 0;
     currentCards = [null, null];
     updateRoundBadge();
-    document.getElementById('disk-left').innerHTML = `<span class="empty-msg">點擊「🎲」開始</span>`;
-    document.getElementById('disk-right').innerHTML = `<span class="empty-msg">點擊「🎲」開始</span>`;
+    document.getElementById('disk-left').innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
+    document.getElementById('disk-right').innerHTML = `<span class="empty-msg">點擊「🎲」下一題</span>`;
   }
 
   function shuffleDeck() {
@@ -935,6 +948,7 @@
     }
   }
 
+  // 計分板
   function renderScoreboard() {
     const count = parseInt(document.getElementById('team-count').value) || 1;
     const board = document.getElementById('scoreboard');
@@ -962,7 +976,7 @@
     document.getElementById(`score-${idx}`).innerText = teamScores[idx];
   }
 
-  // 🎵 100% 絕對生效的頒獎音樂管線（不受 YouTube 隱藏政策限制）
+  // 🎵 100% 播放保證的頒獎音樂
   const victoryAudio = new Audio('https://assets.mixkit.co/active_storage/sfx/2013/2013-preview.mp3');
   victoryAudio.volume = 0.85;
 
@@ -973,21 +987,40 @@
     podiumTimers = [];
   }
 
-  // 🏆 震撼依序揭榜：第三名 (2.0s) ➔ 第二名 (3.5s) ➔ 第一名冠軍 (5.0s)
+  // 🏆 核心：同分並列排名演算法 + 3秒前奏 + 2.5秒逐一揭榜
   function showPodium() {
     clearPodiumTimers();
 
+    // 1. 將組別依分數由大到小排序
     const list = teamScores.map((score, idx) => ({ name: `第 ${idx + 1} 組`, score }));
     list.sort((a, b) => b.score - a.score);
 
-    document.getElementById('p1-name').innerText = list[0] ? list[0].name : '-';
-    document.getElementById('p1-score').innerText = list[0] ? `${list[0].score} 分` : '0 分';
-    document.getElementById('p2-name').innerText = list[1] ? list[1].name : '-';
-    document.getElementById('p2-score').innerText = list[1] ? `${list[1].score} 分` : '0 分';
-    document.getElementById('p3-name').innerText = list[2] ? list[2].name : '-';
-    document.getElementById('p3-score').innerText = list[2] ? `${list[2].score} 分` : '0 分';
+    // 2. 演算法：將相同分數的組別「並列歸類」
+    const scoreGroups = [];
+    list.forEach(item => {
+      const existing = scoreGroups.find(g => g.score === item.score);
+      if (existing) {
+        existing.teams.push(item.name);
+      } else {
+        scoreGroups.push({ score: item.score, teams: [item.name] });
+      }
+    });
 
-    // 1. 先重置所有柱子為完全隱藏
+    // 3. 填入冠軍、亞軍、季軍（同分時合併顯示組別）
+    const g1 = scoreGroups[0];
+    const g2 = scoreGroups[1];
+    const g3 = scoreGroups[2];
+
+    document.getElementById('p1-name').innerText = g1 ? g1.teams.join("、") : '-';
+    document.getElementById('p1-score').innerText = g1 ? `${g1.score} 分` : '0 分';
+
+    document.getElementById('p2-name').innerText = g2 ? g2.teams.join("、") : '-';
+    document.getElementById('p2-score').innerText = g2 ? `${g2.score} 分` : '0 分';
+
+    document.getElementById('p3-name').innerText = g3 ? g3.teams.join("、") : '-';
+    document.getElementById('p3-score').innerText = g3 ? `${g3.score} 分` : '0 分';
+
+    // 4. 重置所有柱子為完全隱形
     const p1 = document.querySelector('.rank-1');
     const p2 = document.querySelector('.rank-2');
     const p3 = document.querySelector('.rank-3');
@@ -997,27 +1030,27 @@
       p.style.visibility = 'hidden';
     });
 
-    // 2. 顯示頒獎彈窗
+    // 5. 顯示頒獎彈窗並立即下音樂
     document.getElementById('podium-modal').style.display = 'flex';
 
-    // 3. 立即播放頒獎音樂（點擊按鈕觸發保證 100% 能響）
     try {
       victoryAudio.currentTime = 0;
       victoryAudio.play().catch(err => console.log("音訊授權:", err));
     } catch (e) {}
 
-    // 4. 音樂先響起，隨後依序隆重升起揭曉
+    // 6. 🌟 音樂先播放 3 秒後公告季軍，之後每隔 2.5 秒揭曉下一名次
     podiumTimers.push(setTimeout(() => {
       p3.classList.add('revealed');
-    }, 500)); // 0.5 秒：音樂前奏鋪陳後，揭曉【第三名】
+    }, 3000)); // 3.0 秒：前奏完畢，揭曉【🥉 季軍】
 
     podiumTimers.push(setTimeout(() => {
       p2.classList.add('revealed');
-    }, 3200)); // 3.2 秒：鼓聲進行中，揭曉【第二名】
+    }, 5500)); // 5.5 秒（間隔 2.5 秒）：揭曉【🥈 亞軍】
 
     podiumTimers.push(setTimeout(() => {
       p1.classList.add('revealed');
-    }, 5000)); // 5.0 秒：音樂進入高潮，揭曉【👑 冠軍第一名】！
+    }, 8000)); // 8.0 秒（間隔 2.5 秒）：音樂高潮，揭曉【👑 冠軍】！
+  }
 
   function closePodium() {
     clearPodiumTimers();
