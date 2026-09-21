@@ -1006,19 +1006,18 @@
       victoryAudio.play().catch(err => console.log("音訊授權:", err));
     } catch (e) {}
 
-    // 4. 依序升起揭示
+    // 4. 音樂先響起，隨後依序隆重升起揭曉
     podiumTimers.push(setTimeout(() => {
       p3.classList.add('revealed');
-    }, 500));  // 0.5 秒：揭曉第三名
+    }, 1500)); // 1.5 秒：音樂前奏鋪陳後，揭曉【第三名】
 
     podiumTimers.push(setTimeout(() => {
       p2.classList.add('revealed');
-    }, 1800)); // 1.8 秒：揭曉第二名
+    }, 3200)); // 3.2 秒：鼓聲進行中，揭曉【第二名】
 
     podiumTimers.push(setTimeout(() => {
       p1.classList.add('revealed');
-    }, 3200)); // 3.2 秒：揭曉冠軍第一名！
-  }
+    }, 5000)); // 5.0 秒：音樂進入高潮，揭曉【👑 冠軍第一名】！
 
   function closePodium() {
     clearPodiumTimers();
