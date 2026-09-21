@@ -135,12 +135,14 @@
   .btn-clear:hover { background: rgba(211, 47, 47, 0.42); }
 
   /* 頂部按鈕 Tooltip（向上彈出，避開游標） */
+  /* 頂部按鈕 Tooltip（向上彈出，避開游標） */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: -32px;
-    left: 50%;
-    transform: translateX(-50%);
+    bottom: calc(100% + 8px) !important; /* 永遠以按鈕頂部為基準往上推 8px */
+    top: auto !important;                 /* 強制取消 top 干擾 */
+    left: 50% !important;
+    transform: translateX(-50%) !important;
     background: rgba(12, 15, 33, 0.96);
     color: #e0e7ff;
     padding: 4px 8px;
@@ -150,11 +152,17 @@
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s, bottom 0.2s;
+    transition: opacity 0.2s, transform 0.2s;
     border: 1px solid #3d467c;
-    z-index: 100;
+    z-index: 999 !important;              /* 確保浮在最上層 */
   }
-  .icon-btn:hover::after { opacity: 1; bottom: -36px; }
+
+  .icon-btn:hover::after {
+    opacity: 1 !important;
+    bottom: calc(100% + 12px) !important; /* 滑鼠移過去時，往上浮動 4px */
+    top: auto !important;
+    transform: translateX(-50%) !important;
+  }
 
   /* 縮圖抽屜與刪除按鈕 */
   .thumb-drawer {
