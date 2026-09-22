@@ -7,13 +7,13 @@
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html, body {
-    width: 100vw;
-    height: 100vh;
-    height: 100dvh;
-    overflow: hidden; /* 保證無捲軸、一頁全覽 */
+    width: 100%;
+    min-height: 100%;
     background-color: #111322;
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
+    overflow-x: hidden;
+    overflow-y: auto; /* 🌟 允許舒適的垂直捲動空間，不再為了硬塞而把圓盤縮小 */
   }
 
   body {
@@ -21,20 +21,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(3px, 0.8vh, 8px) clamp(8px, 1.5vw, 20px);
+    padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
   }
 
-  /* 🌟🌟🌟 頂部整合控制列：緊湊居中，徹底消弭兩側大段留白 🌟🌟🌟 */
+  /* 頂部整合控制列（緊湊居中） */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
-    border-radius: 10px;
-    padding: 3px clamp(8px, 1.2vw, 14px);
-    width: fit-content; /* 關鍵：自適應收緊，不隨意向兩側盲目拉扯留白 */
+    border-radius: 8px;
+    padding: 3px clamp(6px, 1vw, 12px);
+    width: fit-content;
     max-width: 98vw;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     flex-shrink: 0;
-    margin: 2px auto clamp(2px, 0.5vh, 5px) auto;
+    margin: 2px auto clamp(2px, 0.6vh, 5px) auto;
     position: relative;
     z-index: 200;
   }
@@ -42,34 +42,34 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.2vw, 16px);
+    gap: clamp(6px, 1vw, 14px);
   }
 
-  /* 🌟 霸氣顯眼：Spot It! 遊戲標誌與立體放大鏡插圖 🌟 */
+  /* 🌟 Spot It! 遊戲標誌與立體放大鏡 🌟 */
   .brand-logo-area {
     display: flex;
     align-items: center;
-    gap: 7px;
-    padding-right: 10px;
+    gap: 6px;
+    padding-right: 8px;
     border-right: 1.5px solid #2e3561;
     flex-shrink: 0;
     user-select: none;
   }
   .brand-title {
-    font-size: clamp(20px, 2.8vh, 26px); /* 大字級，醒目不突兀 */
+    font-size: clamp(16px, 2.6vh, 24px);
     font-weight: 900;
     font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
     background: linear-gradient(180deg, #fff3b0 0%, #ffb300 45%, #ff6f00 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 1.2px;
-    filter: drop-shadow(0 2px 0 #b23b00) drop-shadow(0 3px 8px rgba(255, 152, 0, 0.5));
+    letter-spacing: 1px;
+    filter: drop-shadow(0 2px 0 #b23b00) drop-shadow(0 3px 6px rgba(255, 152, 0, 0.45));
     white-space: nowrap;
   }
   .brand-icon {
-    width: clamp(22px, 3vh, 28px);
-    height: clamp(22px, 3vh, 28px);
-    filter: drop-shadow(0 3px 6px rgba(255, 179, 0, 0.6));
+    width: clamp(18px, 2.8vh, 26px);
+    height: clamp(18px, 2.8vh, 26px);
+    filter: drop-shadow(0 2px 5px rgba(255, 179, 0, 0.55));
     animation: wiggle 3s ease-in-out infinite;
     flex-shrink: 0;
   }
@@ -78,43 +78,44 @@
     50% { transform: rotate(14deg) scale(1.1); }
   }
 
-  /* 中間參數區：緊湊排列 */
+  /* 參數選單群 */
   .bar-center-group {
     display: flex;
     align-items: center;
-    gap: clamp(6px, 1vw, 12px);
+    gap: clamp(4px, 0.8vw, 10px);
+    flex-shrink: 0;
   }
-
-  .param-item { display: flex; align-items: center; gap: 4px; }
-  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(10.5px, 1vw, 12px); }
+  .param-item { display: flex; align-items: center; gap: 3px; }
+  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(9.5px, 0.9vw, 11.5px); }
 
   select, input[type="number"] {
     background: #23274c;
     color: #fff;
     border: 1px solid #3f477c;
-    padding: 3px 6px;
-    border-radius: 5px;
-    font-size: clamp(10.5px, 1vw, 12px);
+    padding: 2px 5px;
+    border-radius: 4px;
+    font-size: clamp(9.5px, 0.9vw, 11.5px);
     outline: none;
   }
   #theme-select { border-color: #ff9800; color: #ffd54f; font-weight: bold; }
-  input[type="number"] { width: 44px; text-align: center; }
+  input[type="number"] { width: 40px; text-align: center; }
 
   .round-pill {
     background: #0d0f1e;
     border: 1px solid #ff9800;
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 12px;
     color: #ff9800;
     font-weight: bold;
-    font-size: clamp(10px, 0.95vw, 11.5px);
+    font-size: clamp(9px, 0.85vw, 11px);
+    white-space: nowrap;
   }
   .status-tag {
     color: #80cbc4;
-    font-size: clamp(10px, 0.95vw, 11.5px);
+    font-size: clamp(9px, 0.85vw, 11px);
     font-weight: bold;
     background: rgba(0, 150, 136, 0.15);
-    padding: 2px 7px;
+    padding: 2px 6px;
     border-radius: 4px;
     border: 1px solid rgba(0, 150, 136, 0.35);
     white-space: nowrap;
@@ -125,21 +126,21 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    padding-left: 8px;
+    padding-left: 6px;
     border-left: 1.5px solid #2e3561;
     flex-shrink: 0;
   }
   .icon-btn {
     position: relative;
-    width: clamp(26px, 2.6vw, 30px);
-    height: clamp(26px, 2.6vw, 30px);
-    border-radius: 6px;
+    width: clamp(24px, 2.4vw, 28px);
+    height: clamp(24px, 2.4vw, 28px);
+    border-radius: 5px;
     border: 1px solid transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(12px, 1.2vw, 14px);
+    font-size: clamp(11.5px, 1.2vw, 13px);
     transition: transform 0.15s, background-color 0.2s;
   }
   .icon-btn:active { transform: scale(0.92); }
@@ -154,7 +155,7 @@
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: calc(100% + 6px) !important;
+    bottom: calc(100% + 5px) !important;
     top: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
@@ -162,7 +163,7 @@
     color: #e0e7ff;
     padding: 3px 6px;
     border-radius: 4px;
-    font-size: 11px;
+    font-size: 10.5px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
@@ -177,17 +178,17 @@
   .thumb-drawer {
     display: none;
     flex-wrap: wrap;
-    gap: 5px;
-    max-height: 70px;
+    gap: 4px;
+    max-height: 60px;
     overflow-y: auto;
-    margin-top: 4px;
-    padding-top: 4px;
+    margin-top: 3px;
+    padding-top: 3px;
     border-top: 1px dashed #2d335c;
   }
   .thumb-item {
     position: relative;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background: #ffffff;
     border-radius: 4px;
     border: 1px solid #4a5180;
@@ -204,10 +205,10 @@
     color: white;
     border: 1.5px solid #181b36;
     border-radius: 50%;
-    width: 14px;
-    height: 14px;
-    font-size: 10px;
-    line-height: 12px;
+    width: 13px;
+    height: 13px;
+    font-size: 9px;
+    line-height: 11px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
@@ -223,34 +224,28 @@
     margin: 1px auto clamp(2px, 0.4vh, 4px) auto;
     background: rgba(22, 26, 54, 0.96);
     border: 1.5px solid #ff9800;
-    border-radius: 30px;
-    padding: 3px 8px;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+    border-radius: 20px;
+    padding: 2px 7px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.5);
     flex-shrink: 0;
     z-index: 250;
-    animation: fadeIn 0.2s ease-out;
   }
-  @keyframes fadeIn {
-    from { opacity: 0; transform: scale(0.96); }
-    to { opacity: 1; transform: scale(1); }
-  }
-
   .scoreboard-inner-flex {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px;
+    gap: 5px;
   }
   .scoreboard-setting-side {
     display: flex;
     align-items: center;
-    gap: 4px;
-    padding-right: 6px;
+    gap: 3px;
+    padding-right: 5px;
     border-right: 1px solid #3f477c;
   }
   .scoreboard {
     display: flex;
-    gap: 5px;
+    gap: 4px;
     align-items: center;
     justify-content: center;
     overflow-x: auto;
@@ -259,34 +254,33 @@
   .team-card {
     background: #141730;
     border: 1px solid #2d335c;
-    border-radius: 5px;
-    padding: 2px 5px;
-    min-width: 58px;
+    border-radius: 4px;
+    padding: 1px 4px;
+    min-width: 52px;
     text-align: center;
     flex-shrink: 0;
   }
-  .team-title { color: #ff9800; font-size: 10px; font-weight: bold; margin-bottom: 1px; }
+  .team-title { color: #ff9800; font-size: 9.5px; font-weight: bold; }
   .score-display {
     background: #0c0d17;
     color: #00e676;
-    font-size: 14px;
+    font-size: 13px;
     font-weight: bold;
     border-radius: 3px;
-    padding: 0 3px;
-    margin-bottom: 1px;
+    padding: 0 2px;
     font-family: monospace;
-    line-height: 1.2;
+    line-height: 1.1;
   }
   .btn-score {
     background: #2b305c;
     color: #fff;
     border: none;
-    width: 17px;
-    height: 15px;
-    border-radius: 3px;
+    width: 15px;
+    height: 14px;
+    border-radius: 2px;
     font-weight: bold;
     cursor: pointer;
-    font-size: 10px;
+    font-size: 9.5px;
     line-height: 1;
   }
   .btn-score:hover { background: #3c4482; }
@@ -296,9 +290,9 @@
     border: none;
     color: #9fa8da;
     border-radius: 50%;
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
@@ -307,48 +301,46 @@
   }
   .scoreboard-close-btn:hover { background: rgba(239, 68, 68, 0.3); color: #ff8a80; }
 
-  /* 🌟🌟🌟 核心主舞台：絕對隔離排版，保證雙圓盤「永不重疊」右側按鈕 🌟🌟🌟 */
+  /* 🌟🌟🌟 核心主舞台：永遠保持水平左右並列 🌟🌟🌟 */
   .stage-wrapper {
-    flex: 1 1 0;
     width: 100%;
     max-width: 1400px;
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important; /* 🌟 絕對禁止變成 column，保證左右排布 */
     align-items: center;
     justify-content: center;
     position: relative;
-    padding-right: 70px; /* 關鍵：強制為右側按鈕群預留專屬走廊，圓盤絕無可能越界！ */
-    min-height: 0;
+    padding-right: clamp(44px, 5.5vw, 65px); /* 保證右側功能鍵永遠不會擋到右圓盤 */
+    margin: 4px 0;
   }
 
   .arena {
-    display: flex;
+    display: flex !important;
+    flex-direction: row !important; /* 🌟 雙圓盤永遠並排，絕不上下疊放 */
     align-items: center;
     justify-content: center;
-    gap: clamp(12px, 2.5vw, 36px);
+    gap: clamp(8px, 1.8vw, 30px);
     width: 100%;
-    height: 100%;
-    max-height: 100%;
   }
 
-  /* 圓盤自適應正圓：以剩餘寬高精算最大值，徹底杜絕外溢與碰擦 */
+  /* 🌟 圓盤自適應正圓：最大化填滿，不再被強迫縮小 🌟 */
   .dobble-disk {
-    width: min(calc(49vw - 45px), calc(100vh - 100px), 520px);
-    height: min(calc(49vw - 45px), calc(100vh - 100px), 520px);
-    max-height: 98%;
+    /* 以水平寬度平分為基準，在手機橫向時圓盤直徑享有充裕的 42vw ~ 45vw */
+    width: min(calc((100vw - 70px) / 2), 75vh, 520px);
+    height: min(calc((100vw - 70px) / 2), 75vh, 520px);
     background: #ffffff !important;
     border-radius: 50%;
-    border: clamp(4px, 0.8vh, 8px) solid #ff9800;
+    border: clamp(3px, 0.7vh, 7px) solid #ff9800;
     position: relative;
     overflow: hidden;
-    box-shadow: 0 0 clamp(15px, 2.5vw, 30px) rgba(255, 152, 0, 0.3);
+    box-shadow: 0 0 clamp(10px, 2vw, 24px) rgba(255, 152, 0, 0.3);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
     aspect-ratio: 1 / 1;
-    transition: width 0.15s ease, height 0.15s ease;
   }
-  .empty-msg { color: #7b8199; font-size: clamp(12px, 1.4vw, 15px); font-weight: bold; text-align: center; }
+  .empty-msg { color: #7b8199; font-size: clamp(11px, 1.2vw, 14px); font-weight: bold; text-align: center; }
 
   .symbol-item {
     position: absolute;
@@ -366,7 +358,7 @@
     mix-blend-mode: multiply !important;
   }
   .symbol-fallback {
-    font-size: clamp(11px, 1.3vw, 14px);
+    font-size: clamp(10px, 1.2vw, 13px);
     font-weight: bold;
     color: #222;
     background: #f1f3f5;
@@ -377,28 +369,28 @@
     white-space: nowrap;
   }
 
-  /* 🌟 獨立右側操作面板：定位在專屬保留區內，絕不受圓盤擠壓 🌟 */
+  /* 🌟 右側功能按鈕：貼緊最右端安全區，直列排列不佔垂直度 🌟 */
   .side-action-panel {
     position: absolute;
-    right: 4px;
+    right: 2px;
     top: 50%;
     transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: clamp(8px, 1.6vh, 16px);
+    gap: clamp(6px, 1.5vh, 12px);
     background: #161830;
-    padding: clamp(6px, 1.2vh, 12px) clamp(5px, 0.8vw, 8px);
-    border-radius: 12px;
+    padding: clamp(5px, 1vh, 10px) clamp(4px, 0.6vw, 7px);
+    border-radius: 10px;
     border: 1px solid #2d325a;
-    box-shadow: 0 4px 18px rgba(0,0,0,0.45);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.45);
     flex-shrink: 0;
     z-index: 100;
   }
   .side-icon-btn {
     position: relative;
-    width: clamp(38px, 5vh, 50px);
-    height: clamp(38px, 5vh, 50px);
-    font-size: clamp(17px, 2.4vh, 23px);
+    width: clamp(34px, 4.8vh, 46px);
+    height: clamp(34px, 4.8vh, 46px);
+    font-size: clamp(15px, 2.2vh, 21px);
     border-radius: 8px;
     border: 1.5px solid transparent;
     cursor: pointer;
@@ -421,15 +413,15 @@
   .side-icon-btn::before {
     content: attr(data-tooltip);
     position: absolute;
-    right: calc(100% + 10px) !important; /* 🌟 向左側彈出，絕不跑出螢幕外 */
+    right: calc(100% + 8px) !important;
     left: auto !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     background: rgba(10, 13, 28, 0.98);
     color: #ffd54f;
-    padding: 5px 9px;
-    border-radius: 5px;
-    font-size: 11.5px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
@@ -439,41 +431,14 @@
     z-index: 999;
   }
   .side-icon-btn:hover::before { opacity: 1; }
-
-  /* 📱 直立手機/平板適配 */
-  @media (orientation: portrait) or (max-width: 768px) {
-    .stage-wrapper {
-      padding-right: 0;
-      flex-direction: column;
-      gap: 6px;
-    }
-    .arena { flex-direction: column; gap: 6px; }
-    .dobble-disk {
-      width: min(80vw, calc(40vh - 40px), 320px);
-      height: min(80vw, calc(40vh - 40px), 320px);
-    }
-    .side-action-panel {
-      position: static;
-      transform: none;
-      flex-direction: row;
-      gap: 14px;
-      padding: 4px 12px;
-    }
-    .side-icon-btn::before {
-      left: 50% !important;
-      right: auto !important;
-      top: -36px !important;
-      transform: translateX(-50%) !important;
-    }
-  }
 </style>
 </head>
 <body>
 
-  <!-- 🌟 頂部一體化控制列（緊湊居中，左側為超顯眼 Spot It! 品牌標誌） 🌟 -->
+  <!-- 頂部控制列（Spot It! 標題在左側，緊湊居中） -->
   <div class="unified-bar-wrap">
     <div class="unified-bar">
-      <!-- 顯眼品牌標誌與活潑插圖 -->
+      <!-- 品牌區 -->
       <div class="brand-logo-area">
         <svg class="brand-icon" viewBox="0 0 64 64" fill="none">
           <circle cx="28" cy="28" r="18" stroke="#ffb300" stroke-width="7" fill="#ffe082"/>
@@ -482,7 +447,7 @@
         <span class="brand-title">Spot It!</span>
       </div>
 
-      <!-- 緊湊參數設定區 -->
+      <!-- 參數設定區 -->
       <div class="bar-center-group">
         <div class="param-item">
           <span class="param-label">主題</span>
@@ -509,7 +474,7 @@
         <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
       </div>
 
-      <!-- 右側功能按鈕群 -->
+      <!-- 右側按鈕群 -->
       <div class="right-icons">
         <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
@@ -523,7 +488,7 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 緊湊零留白膠囊計分列 -->
+  <!-- 緊湊無空隙膠囊計分列 -->
   <div class="scoreboard-compact-wrap" id="scoreboard-panel">
     <div class="scoreboard-inner-flex">
       <div class="scoreboard-setting-side">
@@ -535,18 +500,18 @@
     </div>
   </div>
 
-  <!-- 🌟 核心主舞台：與右側按鈕絕對隔離，圓盤享有專屬滿版空間 🌟 -->
+  <!-- 🌟 核心舞台：無論何種螢幕永遠左右並列，絕不變成上下疊放 🌟 -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
-    <!-- 獨立保留區內的操作按鈕（永不與圓盤重疊） -->
+    <!-- 右側功能按鈕（靠最右，不佔用圓盤空間） -->
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 頒獎" onclick="toggleVictoryMusic()">🏆</button>
+      <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 播放頒獎樂" onclick="toggleVictoryMusic()">🏆</button>
     </div>
   </div>
 
@@ -778,7 +743,7 @@
         renderDisk('disk-left', currentCards[0]);
         renderDisk('disk-right', currentCards[1]);
       }
-    }, 220);
+    }, 200);
   }
 
   function buildProjectivePlane(n) {
@@ -866,7 +831,7 @@
     disk.innerHTML = '';
     
     const rect = disk.getBoundingClientRect();
-    const radius = rect.width / 2 || 140;
+    const radius = rect.width / 2 || 130;
 
     const slots = getDistributedSlots(symbolIds.length, radius);
     const shuffled = [...symbolIds].sort(() => Math.random() - 0.5);
