@@ -21,50 +21,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(2px, 0.6vh, 6px) clamp(6px, 1.2vw, 14px);
+    padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
   }
 
-  /* 極簡標題列：垂直空間降到最低 */
-  .header-banner {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
-    height: clamp(20px, 3vh, 28px);
-    flex-shrink: 0;
-  }
-  h1.game-title {
-    font-size: clamp(16px, 2.4vh, 22px);
-    font-weight: 900;
-    font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
-    background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1.5px;
-    filter: drop-shadow(0 2px 0 #b23b00);
-  }
-  .title-icon {
-    width: clamp(16px, 2.2vh, 22px);
-    height: clamp(16px, 2.2vh, 22px);
-    filter: drop-shadow(0 2px 4px rgba(255, 183, 3, 0.5));
-    animation: wiggle 3s ease-in-out infinite;
-  }
-  @keyframes wiggle {
-    0%, 100% { transform: rotate(-5deg) scale(1); }
-    50% { transform: rotate(12deg) scale(1.08); }
-  }
-
-  /* 頂部整合控制列 */
+  /* 頂部整合控制列（已將 Spot It! 標題與圖示收納在最左側） */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
     border-radius: 8px;
-    padding: 2px clamp(6px, 1vw, 10px);
+    padding: 3px clamp(6px, 1vw, 12px);
     width: 100%;
-    max-width: 1280px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    max-width: 1360px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
     flex-shrink: 0;
-    margin-bottom: clamp(2px, 0.4vh, 4px);
+    margin-bottom: clamp(3px, 0.6vh, 6px);
     position: relative;
     z-index: 200;
   }
@@ -72,9 +42,53 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
+    justify-content: space-between;
+    gap: clamp(6px, 1vw, 12px);
+  }
+
+  /* 🌟 左側一體化遊戲標題與插圖 🌟 */
+  .brand-logo-area {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-right: 8px;
+    border-right: 1px solid #2d335c;
+    flex-shrink: 0;
+    user-select: none;
+  }
+  .brand-title {
+    font-size: clamp(16px, 2.2vh, 22px);
+    font-weight: 900;
+    font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
+    background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
+    filter: drop-shadow(0 2px 0 #b23b00);
+    white-space: nowrap;
+  }
+  .brand-icon {
+    width: clamp(18px, 2.4vh, 24px);
+    height: clamp(18px, 2.4vh, 24px);
+    filter: drop-shadow(0 2px 4px rgba(255, 183, 3, 0.5));
+    animation: wiggle 3s ease-in-out infinite;
+    flex-shrink: 0;
+  }
+  @keyframes wiggle {
+    0%, 100% { transform: rotate(-5deg) scale(1); }
+    50% { transform: rotate(12deg) scale(1.08); }
+  }
+
+  /* 中間參數區 */
+  .bar-center-group {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
     gap: clamp(6px, 1vw, 10px);
+    flex: 1;
   }
+
   .param-item { display: flex; align-items: center; gap: 4px; }
   .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(10px, 1vw, 11.5px); }
 
@@ -93,8 +107,8 @@
   .round-pill {
     background: #0d0f1e;
     border: 1px solid #ff9800;
-    padding: 1px 6px;
-    border-radius: 10px;
+    padding: 2px 7px;
+    border-radius: 12px;
     color: #ff9800;
     font-weight: bold;
     font-size: clamp(9.5px, 0.95vw, 11px);
@@ -104,7 +118,7 @@
     font-size: clamp(9.5px, 0.95vw, 11px);
     font-weight: bold;
     background: rgba(0, 150, 136, 0.15);
-    padding: 1px 6px;
+    padding: 2px 7px;
     border-radius: 4px;
     border: 1px solid rgba(0, 150, 136, 0.35);
     white-space: nowrap;
@@ -114,8 +128,9 @@
     display: flex;
     align-items: center;
     gap: 4px;
-    padding-left: 5px;
+    padding-left: 6px;
     border-left: 1px solid #2e3561;
+    flex-shrink: 0;
   }
   .icon-btn {
     position: relative;
@@ -203,15 +218,15 @@
     justify-content: center;
   }
 
-  /* 🌟🌟🌟 重新設計：緊湊居中、零空隙膠囊計分列 🌟🌟🌟 */
+  /* 🌟 緊湊居中、零空隙膠囊計分列 🌟 */
   .scoreboard-compact-wrap {
-    display: none; /* 預設收合 */
-    width: fit-content; /* 關鍵：隨組別數量自適應收緊，絕不撐大留白！ */
+    display: none;
+    width: fit-content;
     max-width: 98vw;
     margin: 2px auto clamp(2px, 0.5vh, 4px) auto;
     background: rgba(22, 26, 54, 0.96);
     border: 1.5px solid #ff9800;
-    border-radius: 30px; /* 精美膠囊造型 */
+    border-radius: 30px;
     padding: 3px 8px;
     box-shadow: 0 4px 16px rgba(0,0,0,0.5);
     flex-shrink: 0;
@@ -228,7 +243,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 6px; /* 所有元素緊湊並列，絕不拉扯出巨大空隙 */
+    gap: 6px;
   }
 
   .scoreboard-setting-side {
@@ -296,11 +311,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-left: 2px;
   }
   .scoreboard-close-btn:hover { background: rgba(239, 68, 68, 0.3); color: #ff8a80; }
 
-  /* 🌟 主舞台：高度最大化（佔據畫面 85% 以上） 🌟 */
+  /* 🌟 主舞台：高度最大化 🌟 */
   .stage-wrapper {
     flex: 1 1 0;
     width: 100%;
@@ -322,10 +336,10 @@
     max-height: 100%;
   }
 
-  /* 圓盤自適應正圓：垂直極限填滿 */
+  /* 圓盤自適應正圓：最大化填滿畫面 */
   .dobble-disk {
-    width: min(44vw, calc(100% - 6px), 540px);
-    height: min(44vw, calc(100% - 6px), 540px);
+    width: min(45vw, calc(100% - 4px), 560px);
+    height: min(45vw, calc(100% - 4px), 560px);
     max-height: 98%;
     background: #ffffff !important;
     border-radius: 50%;
@@ -429,6 +443,8 @@
 
   /* 📱 直立手機/平板適配 */
   @media (orientation: portrait) or (max-width: 768px) {
+    .unified-bar { justify-content: center; }
+    .brand-logo-area { border-right: none; padding-right: 0; }
     .stage-wrapper { flex-direction: column; gap: 6px; }
     .arena { flex-direction: column; gap: 6px; }
     .dobble-disk {
@@ -450,42 +466,46 @@
 </head>
 <body>
 
-  <!-- 極簡標題 -->
-  <div class="header-banner">
-    <svg class="title-icon" viewBox="0 0 64 64" fill="none">
-      <circle cx="28" cy="28" r="18" stroke="#ffb300" stroke-width="7" fill="#ffe082"/>
-      <path d="M41 41L54 54" stroke="#ff7043" stroke-width="8" stroke-linecap="round"/>
-    </svg>
-    <h1 class="game-title">Spot It!</h1>
-  </div>
-
-  <!-- 頂部控制列 -->
+  <!-- 頂部一體化控制列（左側為 Spot It! 與活力放大鏡，右側為參數與按鈕） -->
   <div class="unified-bar-wrap">
     <div class="unified-bar">
-      <div class="param-item">
-        <span class="param-label">主題</span>
-        <select id="theme-select" onchange="onThemeChange()">
-          <option value="moon_festival" selected>🥮 中秋節</option>
-        </select>
+      <!-- 🌟 左側標題與活潑插圖 🌟 -->
+      <div class="brand-logo-area">
+        <svg class="brand-icon" viewBox="0 0 64 64" fill="none">
+          <circle cx="28" cy="28" r="18" stroke="#ffb300" stroke-width="7" fill="#ffe082"/>
+          <path d="M41 41L54 54" stroke="#ff7043" stroke-width="8" stroke-linecap="round"/>
+        </svg>
+        <span class="brand-title">Spot It!</span>
       </div>
 
-      <div class="param-item">
-        <span class="param-label">模式</span>
-        <select id="mode-select" onchange="onModeChange()">
-          <option value="3">4圖/卡 (13張圖)</option>
-          <option value="5" selected>6圖/卡 (31張圖)</option>
-          <option value="7">8圖/卡 (57張圖)</option>
-        </select>
+      <!-- 中間參數設定群 -->
+      <div class="bar-center-group">
+        <div class="param-item">
+          <span class="param-label">主題</span>
+          <select id="theme-select" onchange="onThemeChange()">
+            <option value="moon_festival" selected>🥮 中秋節</option>
+          </select>
+        </div>
+
+        <div class="param-item">
+          <span class="param-label">模式</span>
+          <select id="mode-select" onchange="onModeChange()">
+            <option value="3">4圖/卡 (13張圖)</option>
+            <option value="5" selected>6圖/卡 (31張圖)</option>
+            <option value="7">8圖/卡 (57張圖)</option>
+          </select>
+        </div>
+
+        <div class="param-item">
+          <span class="param-label">總回合</span>
+          <input type="number" id="total-rounds" min="1" max="50" value="20" onchange="updateRoundBadge()">
+        </div>
+
+        <div class="round-pill" id="round-indicator">0 / 20</div>
+        <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
       </div>
 
-      <div class="param-item">
-        <span class="param-label">總回合</span>
-        <input type="number" id="total-rounds" min="1" max="50" value="20" onchange="updateRoundBadge()">
-      </div>
-
-      <div class="round-pill" id="round-indicator">0 / 20</div>
-      <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
-
+      <!-- 右側快捷按鈕群 -->
       <div class="right-icons">
         <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
@@ -499,7 +519,7 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 🌟🌟🌟 超緊湊無空隙膠囊計分列：組數、各組卡片、關閉按鈕全部緊湊在一起 🌟🌟🌟 -->
+  <!-- 緊湊無空隙膠囊計分列 -->
   <div class="scoreboard-compact-wrap" id="scoreboard-panel">
     <div class="scoreboard-inner-flex">
       <div class="scoreboard-setting-side">
@@ -511,7 +531,7 @@
     </div>
   </div>
 
-  <!-- 核心主舞台與雙圓盤（垂直高度超大化） -->
+  <!-- 核心主舞台與雙圓盤（視野極大化） -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
@@ -740,7 +760,6 @@
     container.style.display = isHidden ? 'flex' : 'none';
   }
 
-  // 🌟 切換計分板開關
   function toggleScoreboardPanel() {
     const panel = document.getElementById('scoreboard-panel');
     const btn = document.getElementById('btn-toggle-score');
