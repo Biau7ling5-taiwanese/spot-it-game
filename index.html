@@ -10,7 +10,7 @@
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    overflow: hidden; /* 確保全螢幕一頁可視，完全不產生捲動軸 */
+    overflow: hidden; /* 保證一頁可視，完全不產生捲軸 */
     background-color: #111322;
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
@@ -21,20 +21,20 @@
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    padding: clamp(4px, 1vh, 10px) clamp(6px, 1.2vw, 16px);
+    padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
   }
 
-  /* 頂部標題區：小巧精實 */
+  /* 頂部標題 */
   .header-banner {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: clamp(28px, 4.5vh, 42px);
+    height: clamp(26px, 4vh, 36px);
     flex-shrink: 0;
   }
   h1.game-title {
-    font-size: clamp(20px, 3.2vh, 30px);
+    font-size: clamp(20px, 3vh, 28px);
     font-weight: 900;
     font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
     background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
@@ -44,8 +44,8 @@
     filter: drop-shadow(0 2px 0 #b23b00);
   }
   .title-icon {
-    width: clamp(22px, 3vh, 30px);
-    height: clamp(22px, 3vh, 30px);
+    width: clamp(20px, 2.8vh, 26px);
+    height: clamp(20px, 2.8vh, 26px);
     filter: drop-shadow(0 2px 5px rgba(255, 183, 3, 0.5));
     animation: wiggle 3s ease-in-out infinite;
   }
@@ -59,12 +59,12 @@
     background: #181b36;
     border: 1px solid #2d335c;
     border-radius: 8px;
-    padding: 4px clamp(8px, 1.2vw, 14px);
+    padding: 3px clamp(6px, 1.2vw, 12px);
     width: 100%;
     max-width: 1280px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.35);
     flex-shrink: 0;
-    margin-bottom: clamp(4px, 0.8vh, 8px);
+    margin-bottom: clamp(3px, 0.6vh, 6px);
     position: relative;
     z-index: 200;
   }
@@ -82,7 +82,7 @@
     background: #23274c;
     color: #fff;
     border: 1px solid #3f477c;
-    padding: 3px 6px;
+    padding: 2px 6px;
     border-radius: 5px;
     font-size: clamp(10.5px, 1.1vw, 12px);
     outline: none;
@@ -139,7 +139,7 @@
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
 
-  /* 說明文字一律向上彈出避開滑鼠 */
+  /* 說明文字一律向上彈出 */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -204,65 +204,105 @@
     justify-content: center;
   }
 
-  /* 🌟 懸浮毛玻璃計分板面板（不推擠主舞台） */
+  /* 🌟🌟🌟 重新設計：超緊湊「單行一體化」浮動計分列 🌟🌟🌟 */
   .scoreboard-panel-wrap {
     display: none;
     position: absolute;
-    top: clamp(65px, 9vh, 85px);
+    top: clamp(60px, 8.5vh, 80px);
     left: 50%;
     transform: translateX(-50%);
-    width: 94%;
-    max-width: 1000px;
-    background: rgba(20, 23, 48, 0.95);
+    width: 96%;
+    max-width: 1200px;
+    background: rgba(18, 21, 46, 0.96);
     backdrop-filter: blur(12px);
     border: 1.5px solid #ff9800;
-    border-radius: 12px;
-    padding: 10px 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    border-radius: 10px;
+    padding: 6px 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
     z-index: 500;
   }
-  .scoreboard-header {
+  
+  /* 單一行內容器：左側組數、中間組別卡片、右側關閉按鈕全部並排！ */
+  .scoreboard-inline-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 6px;
-    margin-bottom: 8px;
-    border-bottom: 1px dashed #3a4175;
+    gap: 8px;
+    width: 100%;
   }
-  .scoreboard { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+
+  .scoreboard-setting-side {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    flex-shrink: 0;
+    padding-right: 8px;
+    border-right: 1px solid #2d335c;
+  }
+
+  .scoreboard {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    overflow-x: auto;
+  }
+
   .team-card {
-    background: #181b33;
+    background: #141730;
     border: 1px solid #282d54;
     border-radius: 6px;
-    padding: 4px 6px;
-    min-width: 72px;
+    padding: 3px 6px;
+    min-width: 68px;
     text-align: center;
+    flex-shrink: 0;
   }
-  .team-title { color: #ff9800; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
+  .team-title { color: #ff9800; font-size: 10.5px; font-weight: bold; margin-bottom: 1px; }
   .score-display {
     background: #0c0d17;
     color: #00e676;
-    font-size: 17px;
+    font-size: 16px;
     font-weight: bold;
-    border-radius: 4px;
+    border-radius: 3px;
     padding: 1px 0;
-    margin-bottom: 3px;
+    margin-bottom: 2px;
     font-family: monospace;
   }
   .btn-score {
     background: #2b305c;
     color: #fff;
     border: none;
-    width: 20px;
-    height: 18px;
+    width: 19px;
+    height: 17px;
     border-radius: 3px;
     font-weight: bold;
     cursor: pointer;
     font-size: 11px;
+    line-height: 1;
   }
   .btn-score:hover { background: #3c4482; }
 
-  /* 🌟 核心舞台區：自動填滿視窗剩餘空間 */
+  .scoreboard-close-btn {
+    background: transparent;
+    border: 1px solid #3f477c;
+    color: #9fa8da;
+    border-radius: 5px;
+    padding: 4px 8px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .scoreboard-close-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+  }
+
+  /* 核心舞台區：最大化填滿畫面 */
   .stage-wrapper {
     flex: 1 1 auto;
     width: 100%;
@@ -271,7 +311,7 @@
     align-items: center;
     justify-content: center;
     gap: clamp(10px, 2vw, 24px);
-    min-height: 0; /* 關鍵：防止 flex 內容外溢 */
+    min-height: 0;
   }
 
   .arena {
@@ -283,10 +323,9 @@
     height: 100%;
   }
 
-  /* 🌟 自適應正圓卡牌：精確計算寬高，絕不外溢 */
   .dobble-disk {
-    width: min(42vw, calc(98vh - 120px), 520px);
-    height: min(42vw, calc(98vh - 120px), 520px);
+    width: min(43vw, calc(98vh - 100px), 540px);
+    height: min(43vw, calc(98vh - 100px), 540px);
     background: #ffffff !important;
     border-radius: 50%;
     border: clamp(4px, 0.8vh, 8px) solid #ff9800;
@@ -386,13 +425,13 @@
   }
   .side-icon-btn:hover::before { opacity: 1; }
 
-  /* 📱 直立螢幕響應適配（手機或直立平板） */
+  /* 📱 手機/直立平板適配 */
   @media (orientation: portrait) or (max-width: 768px) {
     .stage-wrapper { flex-direction: column; gap: 8px; }
     .arena { flex-direction: column; gap: 8px; }
     .dobble-disk {
-      width: min(78vw, calc(42vh - 60px), 320px);
-      height: min(78vw, calc(42vh - 60px), 320px);
+      width: min(78vw, calc(42vh - 50px), 320px);
+      height: min(78vw, calc(42vh - 50px), 320px);
     }
     .side-action-panel {
       flex-direction: row;
@@ -404,6 +443,7 @@
       top: -38px !important;
       transform: translateX(-50%) !important;
     }
+    .scoreboard-inline-row { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -435,7 +475,6 @@
         </select>
       </div>
 
-      <!-- 預設 20 回合 -->
       <div class="param-item">
         <span class="param-label">總回合</span>
         <input type="number" id="total-rounds" min="1" max="50" value="20" onchange="updateRoundBadge()">
@@ -457,16 +496,21 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 懸浮毛玻璃計分板 -->
+  <!-- 🌟🌟🌟 超緊湊單行計分板（組數、各組卡片、關閉按鈕全部並排在一行） 🌟🌟🌟 -->
   <div class="scoreboard-panel-wrap" id="scoreboard-panel">
-    <div class="scoreboard-header">
-      <div class="param-item">
-        <span class="param-label" style="color:#ffb74d;">組數設定</span>
+    <div class="scoreboard-inline-row">
+      <!-- 左側：組數微調 -->
+      <div class="scoreboard-setting-side">
+        <span class="param-label" style="color:#ffb74d;">組數</span>
         <input type="number" id="team-count" min="1" max="12" value="6" onchange="renderScoreboard()">
       </div>
-      <button style="background:transparent; border:none; color:#9fa8da; font-size:12px; cursor:pointer;" onclick="toggleScoreboardPanel()">✕ 隱藏收合</button>
+
+      <!-- 中間：組別計分卡 -->
+      <div class="scoreboard" id="scoreboard"></div>
+
+      <!-- 右側：關閉按鈕 -->
+      <button class="scoreboard-close-btn" onclick="toggleScoreboardPanel()">✕ 收合</button>
     </div>
-    <div class="scoreboard" id="scoreboard"></div>
   </div>
 
   <!-- 核心主舞台與雙圓盤 -->
@@ -477,9 +521,9 @@
     </div>
 
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
-      <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 頒獎" onclick="toggleVictoryMusic()">🏆</button>
+      <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 播放頒獎樂" onclick="toggleVictoryMusic()">🏆</button>
     </div>
   </div>
 
@@ -899,7 +943,7 @@
     if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 專屬頒獎音樂：優先讀取本機 theme/victory.mp3，具備雲端備援
+  // 🎵 頒獎音樂（優先 theme/victory.mp3，具備雲端備援）
   const victoryAudio = new Audio('theme/victory.mp3');
   victoryAudio.volume = 0.95;
   victoryAudio.onerror = function() {
@@ -949,7 +993,6 @@
     }
   });
 
-  // 視窗縮放或全螢幕切換時，自動重新計算圓盤尺寸並重新繪製圖案
   let resizeTimeout;
   window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
