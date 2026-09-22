@@ -2,45 +2,51 @@
 <html lang="zh-TW">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Spot It!</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
+  html, body {
+    width: 100vw;
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden; /* 確保全螢幕一頁可視，完全不產生捲動軸 */
     background-color: #111322;
     color: #ffffff;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
+  }
+
+  body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: clamp(6px, 1.5vw, 14px);
-    min-height: 100vh;
-    overflow-x: hidden;
+    justify-content: space-between;
+    padding: clamp(4px, 1vh, 10px) clamp(6px, 1.2vw, 16px);
   }
 
-  /* 遊戲化標題 */
+  /* 頂部標題區：小巧精實 */
   .header-banner {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin: 2px 0 clamp(4px, 1vw, 10px) 0;
+    gap: 8px;
+    height: clamp(28px, 4.5vh, 42px);
+    flex-shrink: 0;
   }
   h1.game-title {
-    font-size: clamp(24px, 4vw, 36px);
+    font-size: clamp(20px, 3.2vh, 30px);
     font-weight: 900;
     font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
     background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 2px;
-    filter: drop-shadow(0 3px 0 #b23b00) drop-shadow(0 5px 10px rgba(255, 152, 0, 0.45));
-    transform: perspective(200px) rotateX(6deg);
+    letter-spacing: 1.5px;
+    filter: drop-shadow(0 2px 0 #b23b00);
   }
   .title-icon {
-    width: clamp(26px, 3.5vw, 38px);
-    height: clamp(26px, 3.5vw, 38px);
-    filter: drop-shadow(0 3px 6px rgba(255, 183, 3, 0.5));
+    width: clamp(22px, 3vh, 30px);
+    height: clamp(22px, 3vh, 30px);
+    filter: drop-shadow(0 2px 5px rgba(255, 183, 3, 0.5));
     animation: wiggle 3s ease-in-out infinite;
   }
   @keyframes wiggle {
@@ -48,152 +54,137 @@
     50% { transform: rotate(12deg) scale(1.08); }
   }
 
-  /* 頂部一體化控制列 */
+  /* 緊湊控制列 */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
-    border-radius: 10px;
-    padding: 6px clamp(10px, 2vw, 16px);
-    width: 96%;
-    max-width: 1260px;
+    border-radius: 8px;
+    padding: 4px clamp(8px, 1.2vw, 14px);
+    width: 100%;
+    max-width: 1280px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.35);
-    margin-bottom: clamp(6px, 1.2vw, 12px);
+    flex-shrink: 0;
+    margin-bottom: clamp(4px, 0.8vh, 8px);
+    position: relative;
+    z-index: 200;
   }
   .unified-bar {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.5vw, 14px);
+    gap: clamp(6px, 1.2vw, 12px);
   }
-  .param-item { display: flex; align-items: center; gap: 5px; }
-  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(11px, 1.2vw, 12.5px); }
+  .param-item { display: flex; align-items: center; gap: 4px; }
+  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(10.5px, 1.1vw, 12px); }
 
   select, input[type="number"] {
     background: #23274c;
     color: #fff;
     border: 1px solid #3f477c;
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: clamp(11px, 1.2vw, 13px);
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: clamp(10.5px, 1.1vw, 12px);
     outline: none;
   }
   #theme-select { border-color: #ff9800; color: #ffd54f; font-weight: bold; }
-  input[type="number"] { width: 48px; text-align: center; }
+  input[type="number"] { width: 44px; text-align: center; }
 
   .round-pill {
     background: #0d0f1e;
     border: 1px solid #ff9800;
-    padding: 3px 8px;
-    border-radius: 16px;
+    padding: 2px 7px;
+    border-radius: 12px;
     color: #ff9800;
     font-weight: bold;
-    font-size: clamp(10.5px, 1.1vw, 12px);
+    font-size: clamp(10px, 1vw, 11.5px);
   }
   .status-tag {
     color: #80cbc4;
-    font-size: clamp(10.5px, 1.1vw, 12px);
+    font-size: clamp(10px, 1vw, 11.5px);
     font-weight: bold;
     background: rgba(0, 150, 136, 0.15);
-    padding: 3px 8px;
-    border-radius: 6px;
+    padding: 2px 7px;
+    border-radius: 5px;
     border: 1px solid rgba(0, 150, 136, 0.35);
     white-space: nowrap;
-    transition: all 0.3s ease;
   }
 
-  /* 頂部圖示按鈕組與 Tooltip（向上彈出） */
   .right-icons {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     padding-left: 6px;
     border-left: 1px solid #2e3561;
   }
   .icon-btn {
     position: relative;
-    width: clamp(28px, 3.2vw, 32px);
-    height: clamp(28px, 3.2vw, 32px);
-    border-radius: 7px;
+    width: clamp(26px, 2.8vw, 30px);
+    height: clamp(26px, 2.8vw, 30px);
+    border-radius: 6px;
     border: 1px solid transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(13px, 1.5vw, 15px);
+    font-size: clamp(12px, 1.3vw, 14px);
     transition: transform 0.15s, background-color 0.2s;
   }
   .icon-btn:active { transform: scale(0.92); }
 
   .btn-scoreboard-toggle { background: rgba(255, 152, 0, 0.22); border-color: rgba(255, 152, 0, 0.45); color: #ffb74d; }
   .btn-scoreboard-toggle.active { background: rgba(255, 152, 0, 0.55); border-color: #ff9800; }
-  .btn-scoreboard-toggle:hover { background: rgba(255, 152, 0, 0.38); }
-
   .btn-upload { background: rgba(46, 125, 50, 0.25); border-color: rgba(76, 175, 80, 0.45); color: #81c784; }
-  .btn-upload:hover { background: rgba(46, 125, 50, 0.45); }
   .btn-sync { background: rgba(0, 150, 136, 0.25); border-color: rgba(38, 166, 154, 0.45); color: #80cbc4; }
-  .btn-sync:hover { background: rgba(0, 150, 136, 0.45); }
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
-  .btn-view:hover { background: rgba(124, 77, 255, 0.42); }
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
-  .btn-clear:hover { background: rgba(211, 47, 47, 0.42); }
 
-  /* 頂部按鈕說明文字：一律向上彈出避開滑鼠 */
+  /* 說明文字一律向上彈出避開滑鼠 */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: calc(100% + 8px) !important;
+    bottom: calc(100% + 6px) !important;
     top: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
     background: rgba(12, 15, 33, 0.96);
     color: #e0e7ff;
-    padding: 4px 8px;
-    border-radius: 5px;
+    padding: 3px 6px;
+    border-radius: 4px;
     font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s;
     border: 1px solid #3d467c;
     z-index: 999 !important;
   }
-  .icon-btn:hover::after {
-    opacity: 1 !important;
-    bottom: calc(100% + 12px) !important;
-    top: auto !important;
-    transform: translateX(-50%) !important;
-  }
+  .icon-btn:hover::after { opacity: 1 !important; }
 
-  /* 縮圖抽屜與刪除鍵 */
+  /* 縮圖抽屜 */
   .thumb-drawer {
     display: none;
     flex-wrap: wrap;
-    gap: 8px;
-    max-height: 120px;
+    gap: 6px;
+    max-height: 80px;
     overflow-y: auto;
-    margin-top: 8px;
-    padding-top: 8px;
+    margin-top: 6px;
+    padding-top: 6px;
     border-top: 1px dashed #2d335c;
   }
   .thumb-item {
     position: relative;
-    width: 52px;
-    height: 52px;
+    width: 44px;
+    height: 44px;
     background: #ffffff;
-    border-radius: 6px;
+    border-radius: 5px;
     border: 1px solid #4a5180;
     display: flex;
     align-items: center;
     justify-content: center;
   }
-  .thumb-item img {
-    max-width: 86%;
-    max-height: 86%;
-    object-fit: contain;
-    mix-blend-mode: multiply;
-  }
+  .thumb-item img { max-width: 86%; max-height: 86%; object-fit: contain; mix-blend-mode: multiply; }
   .thumb-del {
     position: absolute;
     top: -4px;
@@ -202,62 +193,56 @@
     color: white;
     border: 1.5px solid #181b36;
     border-radius: 50%;
-    width: 17px;
-    height: 17px;
-    font-size: 11px;
-    line-height: 14px;
+    width: 15px;
+    height: 15px;
+    font-size: 10px;
+    line-height: 13px;
     font-weight: bold;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.15s, background-color 0.15s;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-  }
-  .thumb-del:hover {
-    background: #dc2626;
-    transform: scale(1.15);
   }
 
-  /* 計分板面板（預設收闔） */
+  /* 🌟 懸浮毛玻璃計分板面板（不推擠主舞台） */
   .scoreboard-panel-wrap {
     display: none;
-    width: 96%;
-    max-width: 1260px;
-    background: #141730;
-    border: 1px solid #282d54;
-    border-radius: 10px;
+    position: absolute;
+    top: clamp(65px, 9vh, 85px);
+    left: 50%;
+    transform: translateX(-50%);
+    width: 94%;
+    max-width: 1000px;
+    background: rgba(20, 23, 48, 0.95);
+    backdrop-filter: blur(12px);
+    border: 1.5px solid #ff9800;
+    border-radius: 12px;
     padding: 10px 14px;
-    margin-bottom: clamp(8px, 1.5vw, 14px);
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    z-index: 500;
   }
   .scoreboard-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding-bottom: 8px;
+    padding-bottom: 6px;
     margin-bottom: 8px;
-    border-bottom: 1px dashed #282d54;
+    border-bottom: 1px dashed #3a4175;
   }
-  .scoreboard {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: center;
-  }
+  .scoreboard { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
   .team-card {
     background: #181b33;
     border: 1px solid #282d54;
-    border-radius: 7px;
-    padding: 4px 8px;
-    min-width: clamp(75px, 9vw, 95px);
+    border-radius: 6px;
+    padding: 4px 6px;
+    min-width: 72px;
     text-align: center;
   }
-  .team-title { color: #ff9800; font-size: clamp(10px, 1.1vw, 11.5px); font-weight: bold; margin-bottom: 2px; }
+  .team-title { color: #ff9800; font-size: 11px; font-weight: bold; margin-bottom: 2px; }
   .score-display {
     background: #0c0d17;
     color: #00e676;
-    font-size: clamp(16px, 2vw, 20px);
+    font-size: 17px;
     font-weight: bold;
     border-radius: 4px;
     padding: 1px 0;
@@ -268,7 +253,8 @@
     background: #2b305c;
     color: #fff;
     border: none;
-    width: 22px; height: 20px;
+    width: 20px;
+    height: 18px;
     border-radius: 3px;
     font-weight: bold;
     cursor: pointer;
@@ -276,23 +262,34 @@
   }
   .btn-score:hover { background: #3c4482; }
 
-  /* 核心主舞台與雙圓盤 */
+  /* 🌟 核心舞台區：自動填滿視窗剩餘空間 */
   .stage-wrapper {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: 1360px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(12px, 2.5vw, 26px);
-    width: 98%;
-    max-width: 1280px;
-    margin-bottom: 12px;
+    gap: clamp(10px, 2vw, 24px);
+    min-height: 0; /* 關鍵：防止 flex 內容外溢 */
   }
-  .arena { display: flex; gap: clamp(10px, 2vw, 34px); justify-content: center; align-items: center; }
+
+  .arena {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 2vw, 28px);
+    width: auto;
+    height: 100%;
+  }
+
+  /* 🌟 自適應正圓卡牌：精確計算寬高，絕不外溢 */
   .dobble-disk {
-    width: min(42vw, 55vh, 480px);
-    height: min(42vw, 55vh, 480px);
+    width: min(42vw, calc(98vh - 120px), 520px);
+    height: min(42vw, calc(98vh - 120px), 520px);
     background: #ffffff !important;
     border-radius: 50%;
-    border: clamp(5px, 0.9vw, 8px) solid #ff9800;
+    border: clamp(4px, 0.8vh, 8px) solid #ff9800;
     position: relative;
     overflow: hidden;
     box-shadow: 0 0 clamp(15px, 2.5vw, 30px) rgba(255, 152, 0, 0.3);
@@ -300,7 +297,7 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    transform: translateZ(0);
+    aspect-ratio: 1 / 1;
   }
   .empty-msg { color: #7b8199; font-size: clamp(12px, 1.4vw, 15px); font-weight: bold; text-align: center; }
 
@@ -320,51 +317,46 @@
     mix-blend-mode: multiply !important;
   }
   .symbol-fallback {
-    font-size: clamp(11px, 1.3vw, 15px);
+    font-size: clamp(11px, 1.3vw, 14px);
     font-weight: bold;
     color: #222;
     background: #f1f3f5;
     border: 1px solid #ccc;
-    border-radius: 6px;
-    padding: 3px 6px;
+    border-radius: 5px;
+    padding: 2px 5px;
     text-align: center;
     white-space: nowrap;
   }
 
-  /* 右側操作面板 */
+  /* 右側控制面板 */
   .side-action-panel {
     display: flex;
     flex-direction: column;
-    gap: clamp(8px, 1.2vw, 14px);
+    gap: clamp(8px, 1.5vh, 16px);
     background: #161830;
-    padding: clamp(8px, 1.2vw, 14px) clamp(6px, 1vw, 12px);
-    border-radius: 14px;
+    padding: clamp(8px, 1.5vh, 14px) clamp(6px, 1vw, 10px);
+    border-radius: 12px;
     border: 1px solid #2d325a;
     box-shadow: 0 4px 18px rgba(0,0,0,0.35);
-    position: relative;
-    z-index: 50;
+    flex-shrink: 0;
   }
   .side-icon-btn {
     position: relative;
-    width: clamp(44px, 5.5vw, 58px);
-    height: clamp(44px, 5.5vw, 58px);
-    font-size: clamp(18px, 2.3vw, 26px);
-    border-radius: clamp(10px, 1.2vw, 14px);
+    width: clamp(42px, 5.5vh, 56px);
+    height: clamp(42px, 5.5vh, 56px);
+    font-size: clamp(18px, 2.6vh, 26px);
+    border-radius: 10px;
     border: 1.5px solid transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.25);
     transition: transform 0.15s, background-color 0.2s;
   }
   .side-icon-btn:active { transform: scale(0.92); }
   .btn-draw { background: rgba(33, 150, 243, 0.2); border-color: rgba(100, 181, 246, 0.45); }
-  .btn-draw:hover { background: rgba(33, 150, 243, 0.35); }
   .btn-reset { background: rgba(244, 67, 54, 0.2); border-color: rgba(229, 115, 115, 0.45); }
-  .btn-reset:hover { background: rgba(244, 67, 54, 0.35); }
   .btn-podium { background: rgba(255, 179, 0, 0.2); border-color: rgba(255, 213, 79, 0.45); }
-  .btn-podium:hover { background: rgba(255, 179, 0, 0.35); }
   .btn-podium.playing { animation: pulseGlow 1.2s infinite; border-color: #ffd54f; }
 
   @keyframes pulseGlow {
@@ -372,50 +364,46 @@
     50% { box-shadow: 0 0 20px rgba(255, 179, 0, 0.9); transform: scale(1.06); }
   }
 
-  /* 右側按鈕 Tooltip 永遠向右彈出 */
   .side-icon-btn::before {
     content: attr(data-tooltip);
     position: absolute;
-    left: calc(100% + 14px) !important;
+    left: calc(100% + 12px) !important;
     right: auto !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     background: rgba(10, 13, 28, 0.98);
     color: #ffd54f;
-    padding: 6px 12px;
-    border-radius: 7px;
-    font-size: 13px;
+    padding: 5px 10px;
+    border-radius: 6px;
+    font-size: 12px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s, transform 0.2s;
+    transition: opacity 0.2s;
     border: 1px solid #ff9800;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.6);
     z-index: 999;
   }
-  .side-icon-btn:hover::before {
-    opacity: 1;
-    transform: translateY(-50%) translateX(3px) !important;
-  }
+  .side-icon-btn:hover::before { opacity: 1; }
 
-  @media (max-width: 820px) {
-    .stage-wrapper { flex-direction: column; gap: 14px; }
-    .side-action-panel { flex-direction: row; }
+  /* 📱 直立螢幕響應適配（手機或直立平板） */
+  @media (orientation: portrait) or (max-width: 768px) {
+    .stage-wrapper { flex-direction: column; gap: 8px; }
+    .arena { flex-direction: column; gap: 8px; }
+    .dobble-disk {
+      width: min(78vw, calc(42vh - 60px), 320px);
+      height: min(78vw, calc(42vh - 60px), 320px);
+    }
+    .side-action-panel {
+      flex-direction: row;
+      gap: 14px;
+      padding: 6px 14px;
+    }
     .side-icon-btn::before {
       left: 50% !important;
-      right: auto !important;
-      top: -42px !important;
+      top: -38px !important;
       transform: translateX(-50%) !important;
     }
-    .side-icon-btn:hover::before {
-      transform: translateX(-50%) translateY(-2px) !important;
-    }
-    .dobble-disk { width: min(44vw, 42vh, 320px); height: min(44vw, 42vh, 320px); }
-  }
-  @media (max-width: 480px) {
-    .arena { flex-direction: column; }
-    .dobble-disk { width: min(72vw, 36vh, 260px); height: min(72vw, 36vh, 260px); }
   }
 </style>
 </head>
@@ -457,12 +445,9 @@
       <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
 
       <div class="right-icons">
-        <!-- 計分板開關鈕 -->
-        <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
-
-        <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳新圖片">➕</label>
+        <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板" onclick="toggleScoreboardPanel()">🧮</button>
+        <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
         <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
-
         <button class="icon-btn btn-sync" data-tooltip="🔄 重新載入" onclick="fetchImagesFromGitHub()">🔄</button>
         <button class="icon-btn btn-view" data-tooltip="👁️ 檢視與收闔" onclick="toggleThumbList()">👁️</button>
         <button class="icon-btn btn-clear" data-tooltip="🗑️ 清空圖片" onclick="clearAllImages()">🗑️</button>
@@ -472,7 +457,7 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 計分板面板（預設收合） -->
+  <!-- 懸浮毛玻璃計分板 -->
   <div class="scoreboard-panel-wrap" id="scoreboard-panel">
     <div class="scoreboard-header">
       <div class="param-item">
@@ -484,15 +469,15 @@
     <div class="scoreboard" id="scoreboard"></div>
   </div>
 
+  <!-- 核心主舞台與雙圓盤 -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
-    <!-- 右側面板：已移除手動洗牌，保留抽題、重置、播放頒獎樂 -->
     <div class="side-action-panel">
-      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
+      <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
       <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 播放頒獎樂" onclick="toggleVictoryMusic()">🏆</button>
     </div>
@@ -579,12 +564,13 @@
     const statusTag = document.getElementById('gallery-status');
     if (statusTag) statusTag.innerText = "⚡ 正在連線圖庫...";
 
+    const currentTheme = document.getElementById('theme-select').value;
     const pathParts = window.location.pathname.split('/').filter(Boolean);
     const repoName = pathParts[0] || 'spot-it-game';
     const ownerName = window.location.hostname.split('.')[0] || 'Biau7ling5-taiwanese';
 
-    const localBase = `theme/moon_festival/`;
-    const apiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/theme/moon_festival`;
+    const localBase = `theme/${currentTheme}/`;
+    const apiUrl = `https://api.github.com/repos/${ownerName}/${repoName}/contents/theme/${currentTheme}`;
 
     let files = [];
     try {
@@ -712,7 +698,6 @@
     container.style.display = isHidden ? 'flex' : 'none';
   }
 
-  // 切換計分板開關
   function toggleScoreboardPanel() {
     const panel = document.getElementById('scoreboard-panel');
     const btn = document.getElementById('btn-toggle-score');
@@ -883,7 +868,6 @@
     }
   }
 
-  // 計分板渲染
   function renderScoreboard() {
     const countInput = document.getElementById('team-count');
     const count = countInput ? (parseInt(countInput.value) || 1) : 6;
@@ -915,7 +899,7 @@
     if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 專屬頒獎音樂：讀取 theme/victory.mp3，並具備古典軍隊進行曲雲端備援
+  // 🎵 專屬頒獎音樂：優先讀取本機 theme/victory.mp3，具備雲端備援
   const victoryAudio = new Audio('theme/victory.mp3');
   victoryAudio.volume = 0.95;
   victoryAudio.onerror = function() {
@@ -930,7 +914,7 @@
         isMusicPlaying = true;
         const btn = document.getElementById('btn-podium-music');
         if (btn) btn.classList.add('playing');
-      }).catch(e => console.log("播放授權等待：", e));
+      }).catch(e => console.log("等待授權播放：", e));
     } catch (e) {}
   }
 
@@ -944,7 +928,6 @@
     } catch (e) {}
   }
 
-  // 🏆 點選頒獎按鈕：直接播放／暫停切換
   function toggleVictoryMusic() {
     if (isMusicPlaying) {
       stopVictoryMusic();
@@ -966,11 +949,16 @@
     }
   });
 
+  // 視窗縮放或全螢幕切換時，自動重新計算圓盤尺寸並重新繪製圖案
+  let resizeTimeout;
   window.addEventListener('resize', () => {
-    if (currentCards[0] && currentCards[1]) {
-      renderDisk('disk-left', currentCards[0]);
-      renderDisk('disk-right', currentCards[1]);
-    }
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+      if (currentCards[0] && currentCards[1]) {
+        renderDisk('disk-left', currentCards[0]);
+        renderDisk('disk-right', currentCards[1]);
+      }
+    }, 150);
   });
 
   function safeInit() {
