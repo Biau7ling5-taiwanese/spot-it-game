@@ -10,7 +10,7 @@
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    overflow: hidden; /* 保證一頁可視，完全不產生捲軸 */
+    overflow: hidden; /* 保證一頁全覽，完全不產生捲軸 */
     background-color: #111322;
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +20,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
     padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
   }
 
@@ -30,11 +30,11 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    height: clamp(26px, 4vh, 36px);
+    height: clamp(24px, 3.8vh, 34px);
     flex-shrink: 0;
   }
   h1.game-title {
-    font-size: clamp(20px, 3vh, 28px);
+    font-size: clamp(18px, 2.8vh, 26px);
     font-weight: 900;
     font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
     background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
@@ -44,8 +44,8 @@
     filter: drop-shadow(0 2px 0 #b23b00);
   }
   .title-icon {
-    width: clamp(20px, 2.8vh, 26px);
-    height: clamp(20px, 2.8vh, 26px);
+    width: clamp(18px, 2.6vh, 24px);
+    height: clamp(18px, 2.6vh, 24px);
     filter: drop-shadow(0 2px 5px rgba(255, 183, 3, 0.5));
     animation: wiggle 3s ease-in-out infinite;
   }
@@ -139,7 +139,7 @@
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
 
-  /* 說明文字一律向上彈出 */
+  /* 說明文字向上彈出 */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -204,114 +204,16 @@
     justify-content: center;
   }
 
-  /* 🌟🌟🌟 重新設計：超緊湊「單行一體化」浮動計分列 🌟🌟🌟 */
-  .scoreboard-panel-wrap {
-    display: none;
-    position: absolute;
-    top: clamp(60px, 8.5vh, 80px);
-    left: 50%;
-    transform: translateX(-50%);
-    width: 96%;
-    max-width: 1200px;
-    background: rgba(18, 21, 46, 0.96);
-    backdrop-filter: blur(12px);
-    border: 1.5px solid #ff9800;
-    border-radius: 10px;
-    padding: 6px 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
-    z-index: 500;
-  }
-  
-  /* 單一行內容器：左側組數、中間組別卡片、右側關閉按鈕全部並排！ */
-  .scoreboard-inline-row {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 8px;
-    width: 100%;
-  }
-
-  .scoreboard-setting-side {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    flex-shrink: 0;
-    padding-right: 8px;
-    border-right: 1px solid #2d335c;
-  }
-
-  .scoreboard {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    align-items: center;
-    justify-content: center;
-    flex: 1;
-    overflow-x: auto;
-  }
-
-  .team-card {
-    background: #141730;
-    border: 1px solid #282d54;
-    border-radius: 6px;
-    padding: 3px 6px;
-    min-width: 68px;
-    text-align: center;
-    flex-shrink: 0;
-  }
-  .team-title { color: #ff9800; font-size: 10.5px; font-weight: bold; margin-bottom: 1px; }
-  .score-display {
-    background: #0c0d17;
-    color: #00e676;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 3px;
-    padding: 1px 0;
-    margin-bottom: 2px;
-    font-family: monospace;
-  }
-  .btn-score {
-    background: #2b305c;
-    color: #fff;
-    border: none;
-    width: 19px;
-    height: 17px;
-    border-radius: 3px;
-    font-weight: bold;
-    cursor: pointer;
-    font-size: 11px;
-    line-height: 1;
-  }
-  .btn-score:hover { background: #3c4482; }
-
-  .scoreboard-close-btn {
-    background: transparent;
-    border: 1px solid #3f477c;
-    color: #9fa8da;
-    border-radius: 5px;
-    padding: 4px 8px;
-    font-size: 12px;
-    font-weight: bold;
-    cursor: pointer;
-    flex-shrink: 0;
-    transition: all 0.2s;
-  }
-  .scoreboard-close-btn:hover {
-    background: #ef4444;
-    border-color: #ef4444;
-    color: #ffffff;
-  }
-
-  /* 核心舞台區：最大化填滿畫面 */
+  /* 🌟 核心舞台區：彈性填滿垂直空間，不被計分板覆蓋 🌟 */
   .stage-wrapper {
-    flex: 1 1 auto;
+    flex: 1 1 0;
     width: 100%;
     max-width: 1360px;
     display: flex;
     align-items: center;
     justify-content: center;
     gap: clamp(10px, 2vw, 24px);
-    min-height: 0;
+    min-height: 0; /* 關鍵：防外溢 */
   }
 
   .arena {
@@ -321,11 +223,14 @@
     gap: clamp(10px, 2vw, 28px);
     width: auto;
     height: 100%;
+    max-height: 100%;
   }
 
+  /* 圓盤動態自適應：高度自動配合 Flex 伸縮，保證永不變形與裁切 */
   .dobble-disk {
-    width: min(43vw, calc(98vh - 100px), 540px);
-    height: min(43vw, calc(98vh - 100px), 540px);
+    width: min(44vw, calc(100% - 10px), 520px);
+    height: min(44vw, calc(100% - 10px), 520px);
+    max-height: 96%;
     background: #ffffff !important;
     border-radius: 50%;
     border: clamp(4px, 0.8vh, 8px) solid #ff9800;
@@ -337,6 +242,7 @@
     justify-content: center;
     flex-shrink: 0;
     aspect-ratio: 1 / 1;
+    transition: width 0.25s ease, height 0.25s ease;
   }
   .empty-msg { color: #7b8199; font-size: clamp(12px, 1.4vw, 15px); font-weight: bold; text-align: center; }
 
@@ -381,9 +287,9 @@
   }
   .side-icon-btn {
     position: relative;
-    width: clamp(42px, 5.5vh, 56px);
-    height: clamp(42px, 5.5vh, 56px);
-    font-size: clamp(18px, 2.6vh, 26px);
+    width: clamp(40px, 5.2vh, 54px);
+    height: clamp(40px, 5.2vh, 54px);
+    font-size: clamp(18px, 2.5vh, 25px);
     border-radius: 10px;
     border: 1.5px solid transparent;
     cursor: pointer;
@@ -425,25 +331,125 @@
   }
   .side-icon-btn:hover::before { opacity: 1; }
 
-  /* 📱 手機/直立平板適配 */
+  /* 🌟🌟🌟 全新「底置式智慧推擠計分板」：不覆蓋、不遮擋 🌟🌟🌟 */
+  .scoreboard-bottom-dock {
+    display: none; /* 預設收合 */
+    width: 100%;
+    max-width: 1280px;
+    background: rgba(20, 23, 48, 0.98);
+    border: 1px solid #ff9800;
+    border-radius: 8px;
+    padding: 4px 10px;
+    margin-top: 4px;
+    box-shadow: 0 -4px 16px rgba(0,0,0,0.5);
+    flex-shrink: 0;
+    z-index: 300;
+    animation: slideUp 0.25s ease-out forwards;
+  }
+
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .scoreboard-dock-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .scoreboard-setting-side {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    padding-right: 8px;
+    border-right: 1px solid #2d335c;
+  }
+
+  .scoreboard {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 6px;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    overflow-x: auto;
+    padding: 2px 0;
+  }
+
+  .team-card {
+    background: #141730;
+    border: 1px solid #282d54;
+    border-radius: 6px;
+    padding: 2px 6px;
+    min-width: 66px;
+    text-align: center;
+    flex-shrink: 0;
+  }
+  .team-title { color: #ff9800; font-size: 10.5px; font-weight: bold; margin-bottom: 1px; }
+  .score-display {
+    background: #0c0d17;
+    color: #00e676;
+    font-size: 15px;
+    font-weight: bold;
+    border-radius: 3px;
+    padding: 0 4px;
+    margin-bottom: 2px;
+    font-family: monospace;
+  }
+  .btn-score {
+    background: #2b305c;
+    color: #fff;
+    border: none;
+    width: 18px;
+    height: 16px;
+    border-radius: 3px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 11px;
+    line-height: 1;
+  }
+  .btn-score:hover { background: #3c4482; }
+
+  .scoreboard-close-btn {
+    background: transparent;
+    border: 1px solid #3f477c;
+    color: #9fa8da;
+    border-radius: 5px;
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+  .scoreboard-close-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+  }
+
+  /* 📱 直立螢幕適配 */
   @media (orientation: portrait) or (max-width: 768px) {
     .stage-wrapper { flex-direction: column; gap: 8px; }
-    .arena { flex-direction: column; gap: 8px; }
+    .arena { flex-direction: column; gap: 6px; }
     .dobble-disk {
-      width: min(78vw, calc(42vh - 50px), 320px);
-      height: min(78vw, calc(42vh - 50px), 320px);
+      width: min(78vw, calc(40vh - 40px), 300px);
+      height: min(78vw, calc(40vh - 40px), 300px);
     }
     .side-action-panel {
       flex-direction: row;
       gap: 14px;
-      padding: 6px 14px;
+      padding: 5px 12px;
     }
     .side-icon-btn::before {
       left: 50% !important;
       top: -38px !important;
       transform: translateX(-50%) !important;
     }
-    .scoreboard-inline-row { flex-wrap: wrap; }
   }
 </style>
 </head>
@@ -496,24 +502,7 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 🌟🌟🌟 超緊湊單行計分板（組數、各組卡片、關閉按鈕全部並排在一行） 🌟🌟🌟 -->
-  <div class="scoreboard-panel-wrap" id="scoreboard-panel">
-    <div class="scoreboard-inline-row">
-      <!-- 左側：組數微調 -->
-      <div class="scoreboard-setting-side">
-        <span class="param-label" style="color:#ffb74d;">組數</span>
-        <input type="number" id="team-count" min="1" max="12" value="6" onchange="renderScoreboard()">
-      </div>
-
-      <!-- 中間：組別計分卡 -->
-      <div class="scoreboard" id="scoreboard"></div>
-
-      <!-- 右側：關閉按鈕 -->
-      <button class="scoreboard-close-btn" onclick="toggleScoreboardPanel()">✕ 收合</button>
-    </div>
-  </div>
-
-  <!-- 核心主舞台與雙圓盤 -->
+  <!-- 核心主舞台與雙圓盤（始終保持可見，不被覆蓋） -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
@@ -524,6 +513,18 @@
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
       <button class="side-icon-btn btn-podium" id="btn-podium-music" data-tooltip="🏆 播放頒獎樂" onclick="toggleVictoryMusic()">🏆</button>
+    </div>
+  </div>
+
+  <!-- 🌟 底置推擠式計分板：點擊 🧮 時在最下方安全推開，圓盤自動微縮，完全不遮擋圓盤圖卡 🌟 -->
+  <div class="scoreboard-bottom-dock" id="scoreboard-panel">
+    <div class="scoreboard-dock-content">
+      <div class="scoreboard-setting-side">
+        <span class="param-label" style="color:#ffb74d;">組數</span>
+        <input type="number" id="team-count" min="1" max="12" value="6" onchange="renderScoreboard()">
+      </div>
+      <div class="scoreboard" id="scoreboard"></div>
+      <button class="scoreboard-close-btn" onclick="toggleScoreboardPanel()">✕ 收合</button>
     </div>
   </div>
 
@@ -742,6 +743,7 @@
     container.style.display = isHidden ? 'flex' : 'none';
   }
 
+  // 🌟 切換計分板時觸發重算，圓盤即時縮放以配合版面
   function toggleScoreboardPanel() {
     const panel = document.getElementById('scoreboard-panel');
     const btn = document.getElementById('btn-toggle-score');
@@ -749,6 +751,14 @@
     const isHidden = window.getComputedStyle(panel).display === 'none';
     panel.style.display = isHidden ? 'block' : 'none';
     if (btn) btn.classList.toggle('active', isHidden);
+
+    // 延遲重繪圓盤以精準取得縮放後的尺寸
+    setTimeout(() => {
+      if (currentCards[0] && currentCards[1]) {
+        renderDisk('disk-left', currentCards[0]);
+        renderDisk('disk-right', currentCards[1]);
+      }
+    }, 280);
   }
 
   function buildProjectivePlane(n) {
@@ -836,7 +846,7 @@
     disk.innerHTML = '';
     
     const rect = disk.getBoundingClientRect();
-    const radius = rect.width / 2 || 160;
+    const radius = rect.width / 2 || 140;
 
     const slots = getDistributedSlots(symbolIds.length, radius);
     const shuffled = [...symbolIds].sort(() => Math.random() - 0.5);
@@ -943,7 +953,7 @@
     if (scoreEl) scoreEl.innerText = teamScores[idx];
   }
 
-  // 🎵 頒獎音樂（優先 theme/victory.mp3，具備雲端備援）
+  // 🎵 頒獎音樂（theme/victory.mp3，具備雲端備援）
   const victoryAudio = new Audio('theme/victory.mp3');
   victoryAudio.volume = 0.95;
   victoryAudio.onerror = function() {
