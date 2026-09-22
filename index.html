@@ -10,7 +10,7 @@
     width: 100vw;
     height: 100vh;
     height: 100dvh;
-    overflow: hidden; /* 保證無捲軸、一頁可視 */
+    overflow: hidden; /* 保證無捲軸、一頁全覽 */
     background-color: #111322;
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
@@ -21,88 +21,84 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
+    padding: clamp(3px, 0.8vh, 8px) clamp(8px, 1.5vw, 20px);
   }
 
-  /* 頂部整合控制列（已將 Spot It! 標題與圖示收納在最左側） */
+  /* 🌟🌟🌟 頂部整合控制列：緊湊居中，徹底消弭兩側大段留白 🌟🌟🌟 */
   .unified-bar-wrap {
     background: #181b36;
     border: 1px solid #2d335c;
-    border-radius: 8px;
-    padding: 3px clamp(6px, 1vw, 12px);
-    width: 100%;
-    max-width: 1360px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.35);
+    border-radius: 10px;
+    padding: 3px clamp(8px, 1.2vw, 14px);
+    width: fit-content; /* 關鍵：自適應收緊，不隨意向兩側盲目拉扯留白 */
+    max-width: 98vw;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
     flex-shrink: 0;
-    margin-bottom: clamp(3px, 0.6vh, 6px);
+    margin: 2px auto clamp(2px, 0.5vh, 5px) auto;
     position: relative;
     z-index: 200;
   }
   .unified-bar {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: clamp(6px, 1vw, 12px);
+    justify-content: center;
+    gap: clamp(8px, 1.2vw, 16px);
   }
 
-  /* 🌟 左側一體化遊戲標題與插圖 🌟 */
+  /* 🌟 霸氣顯眼：Spot It! 遊戲標誌與立體放大鏡插圖 🌟 */
   .brand-logo-area {
     display: flex;
     align-items: center;
-    gap: 6px;
-    padding-right: 8px;
-    border-right: 1px solid #2d335c;
+    gap: 7px;
+    padding-right: 10px;
+    border-right: 1.5px solid #2e3561;
     flex-shrink: 0;
     user-select: none;
   }
   .brand-title {
-    font-size: clamp(16px, 2.2vh, 22px);
+    font-size: clamp(20px, 2.8vh, 26px); /* 大字級，醒目不突兀 */
     font-weight: 900;
     font-family: 'Arial Rounded MT Bold', 'Nunito', 'Segoe UI', sans-serif;
-    background: linear-gradient(180deg, #ffe066 0%, #ff9800 50%, #f57c00 100%);
+    background: linear-gradient(180deg, #fff3b0 0%, #ffb300 45%, #ff6f00 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-    filter: drop-shadow(0 2px 0 #b23b00);
+    letter-spacing: 1.2px;
+    filter: drop-shadow(0 2px 0 #b23b00) drop-shadow(0 3px 8px rgba(255, 152, 0, 0.5));
     white-space: nowrap;
   }
   .brand-icon {
-    width: clamp(18px, 2.4vh, 24px);
-    height: clamp(18px, 2.4vh, 24px);
-    filter: drop-shadow(0 2px 4px rgba(255, 183, 3, 0.5));
+    width: clamp(22px, 3vh, 28px);
+    height: clamp(22px, 3vh, 28px);
+    filter: drop-shadow(0 3px 6px rgba(255, 179, 0, 0.6));
     animation: wiggle 3s ease-in-out infinite;
     flex-shrink: 0;
   }
   @keyframes wiggle {
-    0%, 100% { transform: rotate(-5deg) scale(1); }
-    50% { transform: rotate(12deg) scale(1.08); }
+    0%, 100% { transform: rotate(-6deg) scale(1); }
+    50% { transform: rotate(14deg) scale(1.1); }
   }
 
-  /* 中間參數區 */
+  /* 中間參數區：緊湊排列 */
   .bar-center-group {
     display: flex;
-    flex-wrap: wrap;
     align-items: center;
-    justify-content: center;
-    gap: clamp(6px, 1vw, 10px);
-    flex: 1;
+    gap: clamp(6px, 1vw, 12px);
   }
 
   .param-item { display: flex; align-items: center; gap: 4px; }
-  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(10px, 1vw, 11.5px); }
+  .param-label { color: #9fa8da; font-weight: bold; font-size: clamp(10.5px, 1vw, 12px); }
 
   select, input[type="number"] {
     background: #23274c;
     color: #fff;
     border: 1px solid #3f477c;
-    padding: 2px 5px;
-    border-radius: 4px;
-    font-size: clamp(10px, 1vw, 11.5px);
+    padding: 3px 6px;
+    border-radius: 5px;
+    font-size: clamp(10.5px, 1vw, 12px);
     outline: none;
   }
   #theme-select { border-color: #ff9800; color: #ffd54f; font-weight: bold; }
-  input[type="number"] { width: 42px; text-align: center; }
+  input[type="number"] { width: 44px; text-align: center; }
 
   .round-pill {
     background: #0d0f1e;
@@ -111,11 +107,11 @@
     border-radius: 12px;
     color: #ff9800;
     font-weight: bold;
-    font-size: clamp(9.5px, 0.95vw, 11px);
+    font-size: clamp(10px, 0.95vw, 11.5px);
   }
   .status-tag {
     color: #80cbc4;
-    font-size: clamp(9.5px, 0.95vw, 11px);
+    font-size: clamp(10px, 0.95vw, 11.5px);
     font-weight: bold;
     background: rgba(0, 150, 136, 0.15);
     padding: 2px 7px;
@@ -124,25 +120,26 @@
     white-space: nowrap;
   }
 
+  /* 右側功能按鈕 */
   .right-icons {
     display: flex;
     align-items: center;
     gap: 4px;
-    padding-left: 6px;
-    border-left: 1px solid #2e3561;
+    padding-left: 8px;
+    border-left: 1.5px solid #2e3561;
     flex-shrink: 0;
   }
   .icon-btn {
     position: relative;
-    width: clamp(24px, 2.5vw, 28px);
-    height: clamp(24px, 2.5vw, 28px);
-    border-radius: 5px;
+    width: clamp(26px, 2.6vw, 30px);
+    height: clamp(26px, 2.6vw, 30px);
+    border-radius: 6px;
     border: 1px solid transparent;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: clamp(11.5px, 1.2vw, 13.5px);
+    font-size: clamp(12px, 1.2vw, 14px);
     transition: transform 0.15s, background-color 0.2s;
   }
   .icon-btn:active { transform: scale(0.92); }
@@ -157,7 +154,7 @@
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: calc(100% + 5px) !important;
+    bottom: calc(100% + 6px) !important;
     top: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
@@ -165,7 +162,7 @@
     color: #e0e7ff;
     padding: 3px 6px;
     border-radius: 4px;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
@@ -218,12 +215,12 @@
     justify-content: center;
   }
 
-  /* 🌟 緊湊居中、零空隙膠囊計分列 🌟 */
+  /* 緊湊膠囊計分列 */
   .scoreboard-compact-wrap {
     display: none;
     width: fit-content;
     max-width: 98vw;
-    margin: 2px auto clamp(2px, 0.5vh, 4px) auto;
+    margin: 1px auto clamp(2px, 0.4vh, 4px) auto;
     background: rgba(22, 26, 54, 0.96);
     border: 1.5px solid #ff9800;
     border-radius: 30px;
@@ -233,7 +230,6 @@
     z-index: 250;
     animation: fadeIn 0.2s ease-out;
   }
-
   @keyframes fadeIn {
     from { opacity: 0; transform: scale(0.96); }
     to { opacity: 1; transform: scale(1); }
@@ -245,7 +241,6 @@
     justify-content: center;
     gap: 6px;
   }
-
   .scoreboard-setting-side {
     display: flex;
     align-items: center;
@@ -253,7 +248,6 @@
     padding-right: 6px;
     border-right: 1px solid #3f477c;
   }
-
   .scoreboard {
     display: flex;
     gap: 5px;
@@ -262,13 +256,12 @@
     overflow-x: auto;
     padding: 1px 2px;
   }
-
   .team-card {
     background: #141730;
     border: 1px solid #2d335c;
     border-radius: 5px;
     padding: 2px 5px;
-    min-width: 60px;
+    min-width: 58px;
     text-align: center;
     flex-shrink: 0;
   }
@@ -314,15 +307,16 @@
   }
   .scoreboard-close-btn:hover { background: rgba(239, 68, 68, 0.3); color: #ff8a80; }
 
-  /* 🌟 主舞台：高度最大化 🌟 */
+  /* 🌟🌟🌟 核心主舞台：絕對隔離排版，保證雙圓盤「永不重疊」右側按鈕 🌟🌟🌟 */
   .stage-wrapper {
     flex: 1 1 0;
     width: 100%;
-    max-width: 1360px;
+    max-width: 1400px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.8vw, 22px);
+    position: relative;
+    padding-right: 70px; /* 關鍵：強制為右側按鈕群預留專屬走廊，圓盤絕無可能越界！ */
     min-height: 0;
   }
 
@@ -330,16 +324,16 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: clamp(8px, 1.8vw, 24px);
-    width: auto;
+    gap: clamp(12px, 2.5vw, 36px);
+    width: 100%;
     height: 100%;
     max-height: 100%;
   }
 
-  /* 圓盤自適應正圓：最大化填滿畫面 */
+  /* 圓盤自適應正圓：以剩餘寬高精算最大值，徹底杜絕外溢與碰擦 */
   .dobble-disk {
-    width: min(45vw, calc(100% - 4px), 560px);
-    height: min(45vw, calc(100% - 4px), 560px);
+    width: min(calc(49vw - 45px), calc(100vh - 100px), 520px);
+    height: min(calc(49vw - 45px), calc(100vh - 100px), 520px);
     max-height: 98%;
     background: #ffffff !important;
     border-radius: 50%;
@@ -352,7 +346,7 @@
     justify-content: center;
     flex-shrink: 0;
     aspect-ratio: 1 / 1;
-    transition: width 0.2s, height 0.2s;
+    transition: width 0.15s ease, height 0.15s ease;
   }
   .empty-msg { color: #7b8199; font-size: clamp(12px, 1.4vw, 15px); font-weight: bold; text-align: center; }
 
@@ -383,17 +377,22 @@
     white-space: nowrap;
   }
 
-  /* 右側控制面板 */
+  /* 🌟 獨立右側操作面板：定位在專屬保留區內，絕不受圓盤擠壓 🌟 */
   .side-action-panel {
+    position: absolute;
+    right: 4px;
+    top: 50%;
+    transform: translateY(-50%);
     display: flex;
     flex-direction: column;
-    gap: clamp(6px, 1.2vh, 12px);
+    gap: clamp(8px, 1.6vh, 16px);
     background: #161830;
     padding: clamp(6px, 1.2vh, 12px) clamp(5px, 0.8vw, 8px);
-    border-radius: 10px;
+    border-radius: 12px;
     border: 1px solid #2d325a;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+    box-shadow: 0 4px 18px rgba(0,0,0,0.45);
     flex-shrink: 0;
+    z-index: 100;
   }
   .side-icon-btn {
     position: relative;
@@ -422,13 +421,13 @@
   .side-icon-btn::before {
     content: attr(data-tooltip);
     position: absolute;
-    left: calc(100% + 10px) !important;
-    right: auto !important;
+    right: calc(100% + 10px) !important; /* 🌟 向左側彈出，絕不跑出螢幕外 */
+    left: auto !important;
     top: 50% !important;
     transform: translateY(-50%) !important;
     background: rgba(10, 13, 28, 0.98);
     color: #ffd54f;
-    padding: 4px 8px;
+    padding: 5px 9px;
     border-radius: 5px;
     font-size: 11.5px;
     font-weight: bold;
@@ -443,21 +442,26 @@
 
   /* 📱 直立手機/平板適配 */
   @media (orientation: portrait) or (max-width: 768px) {
-    .unified-bar { justify-content: center; }
-    .brand-logo-area { border-right: none; padding-right: 0; }
-    .stage-wrapper { flex-direction: column; gap: 6px; }
+    .stage-wrapper {
+      padding-right: 0;
+      flex-direction: column;
+      gap: 6px;
+    }
     .arena { flex-direction: column; gap: 6px; }
     .dobble-disk {
-      width: min(78vw, calc(40vh - 35px), 300px);
-      height: min(78vw, calc(40vh - 35px), 300px);
+      width: min(80vw, calc(40vh - 40px), 320px);
+      height: min(80vw, calc(40vh - 40px), 320px);
     }
     .side-action-panel {
+      position: static;
+      transform: none;
       flex-direction: row;
-      gap: 12px;
-      padding: 4px 10px;
+      gap: 14px;
+      padding: 4px 12px;
     }
     .side-icon-btn::before {
       left: 50% !important;
+      right: auto !important;
       top: -36px !important;
       transform: translateX(-50%) !important;
     }
@@ -466,10 +470,10 @@
 </head>
 <body>
 
-  <!-- 頂部一體化控制列（左側為 Spot It! 與活力放大鏡，右側為參數與按鈕） -->
+  <!-- 🌟 頂部一體化控制列（緊湊居中，左側為超顯眼 Spot It! 品牌標誌） 🌟 -->
   <div class="unified-bar-wrap">
     <div class="unified-bar">
-      <!-- 🌟 左側標題與活潑插圖 🌟 -->
+      <!-- 顯眼品牌標誌與活潑插圖 -->
       <div class="brand-logo-area">
         <svg class="brand-icon" viewBox="0 0 64 64" fill="none">
           <circle cx="28" cy="28" r="18" stroke="#ffb300" stroke-width="7" fill="#ffe082"/>
@@ -478,7 +482,7 @@
         <span class="brand-title">Spot It!</span>
       </div>
 
-      <!-- 中間參數設定群 -->
+      <!-- 緊湊參數設定區 -->
       <div class="bar-center-group">
         <div class="param-item">
           <span class="param-label">主題</span>
@@ -505,7 +509,7 @@
         <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
       </div>
 
-      <!-- 右側快捷按鈕群 -->
+      <!-- 右側功能按鈕群 -->
       <div class="right-icons">
         <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
@@ -519,7 +523,7 @@
     <div class="thumb-drawer" id="thumb-container"></div>
   </div>
 
-  <!-- 緊湊無空隙膠囊計分列 -->
+  <!-- 緊湊零留白膠囊計分列 -->
   <div class="scoreboard-compact-wrap" id="scoreboard-panel">
     <div class="scoreboard-inner-flex">
       <div class="scoreboard-setting-side">
@@ -531,13 +535,14 @@
     </div>
   </div>
 
-  <!-- 核心主舞台與雙圓盤（視野極大化） -->
+  <!-- 🌟 核心主舞台：與右側按鈕絕對隔離，圓盤享有專屬滿版空間 🌟 -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
+    <!-- 獨立保留區內的操作按鈕（永不與圓盤重疊） -->
     <div class="side-action-panel">
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題 (空白鍵)" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
