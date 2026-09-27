@@ -13,7 +13,7 @@
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    overflow-y: auto; /* 🌟 允許舒適的垂直捲動空間，不再為了硬塞而把圓盤縮小 */
+    overflow-y: auto; /* 允許舒適的垂直捲動空間 */
   }
 
   body {
@@ -306,26 +306,25 @@
     width: 100%;
     max-width: 1400px;
     display: flex !important;
-    flex-direction: row !important; /* 🌟 絕對禁止變成 column，保證左右排布 */
+    flex-direction: row !important;
     align-items: center;
     justify-content: center;
     position: relative;
-    padding-right: clamp(44px, 5.5vw, 65px); /* 保證右側功能鍵永遠不會擋到右圓盤 */
+    padding-right: clamp(44px, 5.5vw, 65px);
     margin: 4px 0;
   }
 
   .arena {
     display: flex !important;
-    flex-direction: row !important; /* 🌟 雙圓盤永遠並排，絕不上下疊放 */
+    flex-direction: row !important;
     align-items: center;
     justify-content: center;
     gap: clamp(8px, 1.8vw, 30px);
     width: 100%;
   }
 
-  /* 🌟 圓盤自適應正圓：最大化填滿，不再被強迫縮小 🌟 */
+  /* 圓盤自適應正圓 */
   .dobble-disk {
-    /* 以水平寬度平分為基準，在手機橫向時圓盤直徑享有充裕的 42vw ~ 45vw */
     width: min(calc((100vw - 70px) / 2), 75vh, 520px);
     height: min(calc((100vw - 70px) / 2), 75vh, 520px);
     background: #ffffff !important;
@@ -369,7 +368,7 @@
     white-space: nowrap;
   }
 
-  /* 🌟 右側功能按鈕：貼緊最右端安全區，直列排列不佔垂直度 🌟 */
+  /* 右側功能按鈕 */
   .side-action-panel {
     position: absolute;
     right: 2px;
@@ -435,7 +434,7 @@
 </head>
 <body>
 
-  <!-- 頂部控制列（Spot It! 標題在左側，緊湊居中） -->
+  <!-- 頂部控制列 -->
   <div class="unified-bar-wrap">
     <div class="unified-bar">
       <!-- 品牌區 -->
@@ -500,14 +499,14 @@
     </div>
   </div>
 
-  <!-- 🌟 核心舞台：無論何種螢幕永遠左右並列，絕不變成上下疊放 🌟 -->
+  <!-- 核心舞台：無論何種螢幕永遠左右並列 -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
-    <!-- 右側功能按鈕（靠最右，不佔用圓盤空間） -->
+    <!-- 右側功能按鈕 -->
     <div class="side-action-panel">
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
@@ -882,13 +881,16 @@
     });
   }
 
+  // 🌟 修改重點：回合數到達上限時，不再自動觸發播放音樂，完全改由使用者點擊按鈕觸發 🌟
   function drawNextPair() {
     const totalInput = document.getElementById('total-rounds');
     const totalRounds = totalInput ? (parseInt(totalInput.value) || 20) : 20;
+
+    // 局數已滿時，單純阻擋繼續抽牌，不自動播放音樂
     if (currentRound >= totalRounds) {
-      playVictoryMusic();
       return;
     }
+
     if (deck.length < 2) {
       const modeSelect = document.getElementById('mode-select');
       const n = modeSelect ? parseInt(modeSelect.value) : 5;
@@ -901,10 +903,6 @@
 
     currentRound++;
     updateRoundBadge();
-
-    if (currentRound === totalRounds) {
-      setTimeout(playVictoryMusic, 800);
-    }
   }
 
   function renderScoreboard() {
@@ -967,6 +965,7 @@
     } catch (e) {}
   }
 
+  // 🏆 唯有主動點擊按鈕時，才會播放／暫停頒獎樂
   function toggleVictoryMusic() {
     if (isMusicPlaying) {
       stopVictoryMusic();
