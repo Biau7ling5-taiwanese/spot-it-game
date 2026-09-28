@@ -13,10 +13,10 @@
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    overflow-y: auto; /* 允許舒適的垂直捲動空間，保護圓盤尺寸不被擠扁 */
+    overflow-y: auto;
   }
 
-  /* 🌟 頂部預留專屬天空區（約 28px），保證 Tooltip 向上彈出時 100% 完整露出 🌟 */
+  /* 頂部預留天空區，保證 Tooltip 向上彈出時 100% 完整露出 */
   body {
     display: flex;
     flex-direction: column;
@@ -125,7 +125,7 @@
     white-space: nowrap;
   }
 
-  /* 右側功能按鈕（已移除重複的 🔄） */
+  /* 右側功能按鈕 */
   .right-icons {
     display: flex;
     align-items: center;
@@ -155,7 +155,7 @@
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
 
-  /* 🌟 Tooltip 向上彈出（絕不被頂端切邊） 🌟 */
+  /* Tooltip 向上彈出（絕不被頂端切邊） */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
@@ -309,7 +309,7 @@
   }
   .scoreboard-close-btn:hover { background: rgba(239, 68, 68, 0.3); color: #ff8a80; }
 
-  /* 🌟🌟🌟 核心主舞台：永遠保持水平左右並列 🌟🌟🌟 */
+  /* 核心主舞台：永遠保持水平左右並列 */
   .stage-wrapper {
     width: 100%;
     max-width: 1400px;
@@ -376,7 +376,7 @@
     white-space: nowrap;
   }
 
-  /* 右側功能按鈕（唯一保留重開邏輯） */
+  /* 右側功能按鈕 */
   .side-action-panel {
     position: absolute;
     right: 2px;
@@ -481,13 +481,13 @@
         <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
       </div>
 
-      <!-- 右側按鈕群（已精簡移除重複的 🔄） -->
+      <!-- 右側按鈕群 -->
       <div class="right-icons">
         <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板" onclick="toggleScoreboardPanel()">🧮</button>
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
         <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
-        <button class="icon-btn btn-view" data-tooltip="👁️ 檢視圖卡" onclick="toggleThumbList()">👁️</button>
-        <button class="icon-btn btn-clear" data-tooltip="🗑️ 清空圖卡" onclick="clearAllImages()">🗑️</button>
+        <button class="icon-btn btn-view" data-tooltip="👁️ 檢視圖片" onclick="toggleThumbList()">👁️</button>
+        <button class="icon-btn btn-clear" data-tooltip="🗑️ 清空圖片" onclick="clearAllImages()">🗑️</button>
       </div>
     </div>
 
@@ -506,14 +506,14 @@
     </div>
   </div>
 
-  <!-- 核心舞台：無論何種螢幕永遠左右並列 -->
+  <!-- 核心主舞台：無論何種螢幕永遠左右並列 -->
   <div class="stage-wrapper">
     <div class="arena">
       <div class="dobble-disk" id="disk-left"><span class="empty-msg">點擊「🎲」下一題</span></div>
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
-    <!-- 右側功能按鈕（唯一保留重開邏輯） -->
+    <!-- 右側功能按鈕 -->
     <div class="side-action-panel">
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
@@ -557,10 +557,14 @@
   ];
 
   let imageList = [];
-  let deck = [];
+  let allCardsPool = []; // 儲存該模式下所有生成的卡牌
   let currentRound = 0;
   let teamScores = [];
   let currentCards = [null, null];
+
+  // 🌟 核心防重複演算法：最近出現過的答案佇列（冷卻池） 🌟
+  let recentAnswersQueue = [];
+  const RECENT_ANSWER_COOLDOWN = 6; // 最近 6 題內出現過的圖案盡量不重複
 
   const preloadedImageCache = {};
 
@@ -752,6 +756,7 @@
     }, 200);
   }
 
+  // 射影平面生成算法
   function buildProjectivePlane(n) {
     const cards = [];
     const c1 = [];
@@ -774,11 +779,19 @@
     return cards;
   }
 
+  // 取得兩張卡片唯一的交集圖案 ID
+  function findCommonSymbol(cardA, cardB) {
+    for (let i = 0; i < cardA.length; i++) {
+      if (cardB.includes(cardA[i])) return cardA[i];
+    }
+    return null;
+  }
+
   function resetGame() {
     const modeSelect = document.getElementById('mode-select');
     const n = modeSelect ? parseInt(modeSelect.value) : 5;
-    const baseCards = buildProjectivePlane(n);
-    deck = [...baseCards].sort(() => Math.random() - 0.5);
+    allCardsPool = buildProjectivePlane(n);
+    recentAnswersQueue = [];
     currentRound = 0;
     currentCards = [null, null];
     updateRoundBadge();
@@ -888,22 +901,70 @@
     });
   }
 
+  // 🌟🌟🌟 核心智慧抽題演算法：主動避免答案近期重複 🌟🌟🌟
   function drawNextPair() {
     const totalInput = document.getElementById('total-rounds');
     const totalRounds = totalInput ? (parseInt(totalInput.value) || 20) : 20;
 
-    // 局數已滿時單純阻擋，絕不自動播放音樂
     if (currentRound >= totalRounds) {
       return;
     }
 
-    if (deck.length < 2) {
+    if (!allCardsPool || allCardsPool.length < 2) {
       const modeSelect = document.getElementById('mode-select');
       const n = modeSelect ? parseInt(modeSelect.value) : 5;
-      deck = buildProjectivePlane(n).sort(() => Math.random() - 0.5);
+      allCardsPool = buildProjectivePlane(n);
     }
 
-    currentCards = [deck.pop(), deck.pop()];
+    let selectedPair = null;
+    let chosenAnswer = null;
+    let bestFallbackPair = null;
+    let maxDistance = -1;
+
+    // 隨機抽樣多組候選配對，優先選擇答案完全不在近期冷卻名單中的那一組
+    const maxTries = 40;
+    for (let t = 0; t < maxTries; t++) {
+      const idxA = Math.floor(Math.random() * allCardsPool.length);
+      let idxB = Math.floor(Math.random() * allCardsPool.length);
+      while (idxB === idxA) {
+        idxB = Math.floor(Math.random() * allCardsPool.length);
+      }
+
+      const cardA = allCardsPool[idxA];
+      const cardB = allCardsPool[idxB];
+      const common = findCommonSymbol(cardA, cardB);
+
+      if (common !== null) {
+        const lastSeenDist = recentAnswersQueue.indexOf(common);
+        // 如果這個答案完全不在冷卻佇列中（最近沒出現過），就是最完美的一組！
+        if (lastSeenDist === -1) {
+          selectedPair = [cardA, cardB];
+          chosenAnswer = common;
+          break;
+        } else if (lastSeenDist > maxDistance) {
+          // 備援：若所有組合都出現過，選距離最久以前出現的那一組
+          maxDistance = lastSeenDist;
+          bestFallbackPair = [cardA, cardB];
+          chosenAnswer = common;
+        }
+      }
+    }
+
+    // 若隨機挑選未找到完全嶄新的答案，使用距離最久的備援配對
+    if (!selectedPair) {
+      selectedPair = bestFallbackPair || [allCardsPool[0], allCardsPool[1]];
+      chosenAnswer = findCommonSymbol(selectedPair[0], selectedPair[1]);
+    }
+
+    // 更新最近答案記錄（冷卻長度控制在 5~6 個題內）
+    if (chosenAnswer !== null) {
+      recentAnswersQueue.push(chosenAnswer);
+      if (recentAnswersQueue.length > RECENT_ANSWER_COOLDOWN) {
+        recentAnswersQueue.shift();
+      }
+    }
+
+    currentCards = selectedPair;
     renderDisk('disk-left', currentCards[0]);
     renderDisk('disk-right', currentCards[1]);
 
