@@ -13,15 +13,19 @@
     color: #ffffff;
     font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Tahoma, Geneva, Verdana, sans-serif;
     overflow-x: hidden;
-    overflow-y: auto; /* 允許舒適的垂直捲動空間 */
+    overflow-y: auto; /* 允許舒適的垂直捲動空間，保護圓盤尺寸不被擠扁 */
   }
 
+  /* 🌟 頂部預留專屬天空區（約 28px），保證 Tooltip 向上彈出時 100% 完整露出 🌟 */
   body {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding: clamp(3px, 0.8vh, 8px) clamp(6px, 1.2vw, 16px);
+    padding-top: clamp(26px, 4vh, 32px);
+    padding-bottom: clamp(6px, 1vh, 12px);
+    padding-left: clamp(6px, 1.2vw, 16px);
+    padding-right: clamp(6px, 1.2vw, 16px);
   }
 
   /* 頂部整合控制列（緊湊居中） */
@@ -34,7 +38,7 @@
     max-width: 98vw;
     box-shadow: 0 4px 14px rgba(0,0,0,0.4);
     flex-shrink: 0;
-    margin: 2px auto clamp(2px, 0.6vh, 5px) auto;
+    margin: 0 auto clamp(3px, 0.6vh, 6px) auto;
     position: relative;
     z-index: 200;
   }
@@ -45,7 +49,7 @@
     gap: clamp(6px, 1vw, 14px);
   }
 
-  /* 🌟 Spot It! 遊戲標誌與立體放大鏡 🌟 */
+  /* Spot It! 遊戲標誌與立體放大鏡 */
   .brand-logo-area {
     display: flex;
     align-items: center;
@@ -121,7 +125,7 @@
     white-space: nowrap;
   }
 
-  /* 右側功能按鈕 */
+  /* 右側功能按鈕（已移除重複的 🔄） */
   .right-icons {
     display: flex;
     align-items: center;
@@ -148,31 +152,35 @@
   .btn-scoreboard-toggle { background: rgba(255, 152, 0, 0.22); border-color: rgba(255, 152, 0, 0.45); color: #ffb74d; }
   .btn-scoreboard-toggle.active { background: rgba(255, 152, 0, 0.6); border-color: #ff9800; }
   .btn-upload { background: rgba(46, 125, 50, 0.25); border-color: rgba(76, 175, 80, 0.45); color: #81c784; }
-  .btn-sync { background: rgba(0, 150, 136, 0.25); border-color: rgba(38, 166, 154, 0.45); color: #80cbc4; }
   .btn-view { background: rgba(124, 77, 255, 0.22); border-color: rgba(179, 136, 255, 0.45); color: #d1c4e9; }
   .btn-clear { background: rgba(211, 47, 47, 0.22); border-color: rgba(239, 83, 80, 0.45); color: #ef9a9a; }
 
+  /* 🌟 Tooltip 向上彈出（絕不被頂端切邊） 🌟 */
   .icon-btn::after {
     content: attr(data-tooltip);
     position: absolute;
-    bottom: calc(100% + 5px) !important;
+    bottom: calc(100% + 6px) !important;
     top: auto !important;
     left: 50% !important;
     transform: translateX(-50%) !important;
-    background: rgba(12, 15, 33, 0.96);
+    background: rgba(10, 13, 28, 0.98);
     color: #e0e7ff;
-    padding: 3px 6px;
+    padding: 3px 7px;
     border-radius: 4px;
-    font-size: 10.5px;
+    font-size: 11px;
     font-weight: bold;
     white-space: nowrap;
     opacity: 0;
     pointer-events: none;
-    transition: opacity 0.2s;
-    border: 1px solid #3d467c;
-    z-index: 999 !important;
+    transition: opacity 0.2s, transform 0.2s;
+    border: 1px solid #4a548c;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    z-index: 9999 !important;
   }
-  .icon-btn:hover::after { opacity: 1 !important; }
+  .icon-btn:hover::after {
+    opacity: 1 !important;
+    transform: translateX(-50%) translateY(-2px) !important;
+  }
 
   /* 縮圖抽屜 */
   .thumb-drawer {
@@ -368,7 +376,7 @@
     white-space: nowrap;
   }
 
-  /* 右側功能按鈕 */
+  /* 右側功能按鈕（唯一保留重開邏輯） */
   .side-action-panel {
     position: absolute;
     right: 2px;
@@ -473,12 +481,11 @@
         <div class="status-tag" id="gallery-status">⚡ 準備連線中...</div>
       </div>
 
-      <!-- 右側按鈕群 -->
+      <!-- 右側按鈕群（已精簡移除重複的 🔄） -->
       <div class="right-icons">
         <button class="icon-btn btn-scoreboard-toggle" id="btn-toggle-score" data-tooltip="🧮 計分板開關" onclick="toggleScoreboardPanel()">🧮</button>
         <label for="img-input" class="icon-btn btn-upload" data-tooltip="➕ 上傳圖片">➕</label>
         <input type="file" id="img-input" multiple accept="image/*" style="display:none;">
-        <button class="icon-btn btn-sync" data-tooltip="🔄 重新載入" onclick="fetchImagesFromGitHub()">🔄</button>
         <button class="icon-btn btn-view" data-tooltip="👁️ 檢視與收闔" onclick="toggleThumbList()">👁️</button>
         <button class="icon-btn btn-clear" data-tooltip="🗑️ 清空圖片" onclick="clearAllImages()">🗑️</button>
       </div>
@@ -506,7 +513,7 @@
       <div class="dobble-disk" id="disk-right"><span class="empty-msg">點擊「🎲」下一題</span></div>
     </div>
 
-    <!-- 右側功能按鈕 -->
+    <!-- 右側功能按鈕（唯一保留重開邏輯） -->
     <div class="side-action-panel">
       <button class="side-icon-btn btn-draw" data-tooltip="🎲 抽下一題" onclick="drawNextPair()">🎲</button>
       <button class="side-icon-btn btn-reset" data-tooltip="🔄 重新開始" onclick="resetGame()">🔄</button>
@@ -714,7 +721,7 @@
   }
 
   function clearAllImages() {
-    if (confirm("確定要清空目前圖片嗎？（將切換為純文字卡模式，點擊 🔄 可隨時復原圖庫）")) {
+    if (confirm("確定要清空目前圖片嗎？（將切換為純文字卡模式，重新載入頁面可隨時復原圖庫）")) {
       imageList = [];
       Object.keys(preloadedImageCache).forEach(key => delete preloadedImageCache[key]);
       renderThumbnails();
@@ -881,12 +888,11 @@
     });
   }
 
-  // 🌟 修改重點：回合數到達上限時，不再自動觸發播放音樂，完全改由使用者點擊按鈕觸發 🌟
   function drawNextPair() {
     const totalInput = document.getElementById('total-rounds');
     const totalRounds = totalInput ? (parseInt(totalInput.value) || 20) : 20;
 
-    // 局數已滿時，單純阻擋繼續抽牌，不自動播放音樂
+    // 局數已滿時單純阻擋，絕不自動播放音樂
     if (currentRound >= totalRounds) {
       return;
     }
@@ -965,7 +971,7 @@
     } catch (e) {}
   }
 
-  // 🏆 唯有主動點擊按鈕時，才會播放／暫停頒獎樂
+  // 🏆 唯有主動點擊按鈕時才切換播放／暫停
   function toggleVictoryMusic() {
     if (isMusicPlaying) {
       stopVictoryMusic();
